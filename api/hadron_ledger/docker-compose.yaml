@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+  hadron-api:
+    container_name: 'hadron-ledger-api'
+    image: 'hadron-ledger-api'
+    ports: ['8000:8000']
+    labels: ['com.hadron.role=api']
+  geth-client:
+    container_name: 'geth-client'
+    image: 'ethereum/client-go'
+    ports: ['30303:30303', '8545:8545']
+    volumes: ['/volume/on/host:/root/.ethereum']
