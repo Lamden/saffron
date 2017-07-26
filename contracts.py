@@ -50,10 +50,10 @@ def generate_new_contract(template_file_name, payload, name, contract_directory=
 
 pprint.pprint(get_template_variables('C:/Users/stuart/Desktop/hadron_chain_example/hadron/contract_templates/fixed_supply_token.tsol'))
 
-payload = {'asset_name': 'DICK',
+payload = {'asset_name': 'WHAT',
 'contract_name': 'Something',
 'solidity_version': '0.4.11',
-'symbol': 'DIQ',
+'symbol': 'WAT',
 'total_supply': '100000000000000000000000'}
 
 pprint.pprint(generate_new_contract('C:/Users/stuart/Desktop/hadron_chain_example/hadron/contract_templates/fixed_supply_token.tsol', payload, 'Testing'))
