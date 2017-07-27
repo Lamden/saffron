@@ -1,0 +1,26 @@
+
+
+simps:
+
+```
+cd docker_hadron_ledger_api && gunicorn api:application
+echo 'pragma solidity ^0.4.11;contract mortal { address owner; function mortal() { owner = msg.sender; } function kill() { if (msg.sender == owner) suicide(owner); } } contract greeter is mortal { string greeting; function greeter(string _greeting) public { greeting = _greeting; } function greet() constant returns (string) { return greeting; } }' | curl --data-binary @- localhost:8000/some_endpoint
+```
+
+
+less simps:
+
+```
+docker pull ethereum/client-go
+docker build -t hadron-ledger-api docker_hadron_ledger_api
+docker-compose up
+```
+
+
+input/output example:
+
+```
+$ echo 'pragma solidity ^0.4.11;contract mortal { address owner; function mortal() { owner = msg.sender; } function kill() { if (msg.sender == owner) suicide(owner); } } contract greeter is mortal { string greeting; function greeter(string _greeting) public { greeting = _greeting; } function greet() constant returns (string) { return greeting; } }' | curl --data-binary @- localhost:8000/some_endpoint
+Created the following files:
+    ['greeter.abi', 'greeter.bin', 'mortal.abi', 'mortal.bin']
+```

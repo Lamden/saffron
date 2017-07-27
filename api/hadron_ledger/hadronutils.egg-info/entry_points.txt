@@ -1,0 +1,3 @@
+[console_scripts]
+hadronutils-genesis = hadronutils.genesis:gen_chain
+
