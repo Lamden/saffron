@@ -7,6 +7,21 @@ import os
 import accounts
 import utils
 
+class Chain:
+    class __Chain:
+        def __init__(self, project_dir):
+            self.project_dir = project_dir
+        def __str__(self):
+            return repr(self) + self.project_dir
+    instance = None
+    def __init__(self, project_dir):
+        if not Chain.instance:
+            Chain.instance = Chain.__Chain(project_dir)
+        else:
+            Chain.instance.project_dir = project_dir
+    def __getattr__(self, name):
+        return getattr(self.instance, name)
+
 def create_genesis_block(genesisBlockPayload):
 	assert all(x in \
 	['config',
