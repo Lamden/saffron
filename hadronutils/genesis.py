@@ -8,19 +8,35 @@ import accounts
 import utils
 
 class Chain:
-    class __Chain:
-        def __init__(self, project_dir):
-            self.project_dir = project_dir
-        def __str__(self):
-            return repr(self) + self.project_dir
-    instance = None
-    def __init__(self, project_dir):
-        if not Chain.instance:
-            Chain.instance = Chain.__Chain(project_dir)
-        else:
-            Chain.instance.project_dir = project_dir
-    def __getattr__(self, name):
-        return getattr(self.instance, name)
+	class __Chain:
+		def __init__(self, project_dir='.', genesisBlockPayload=None, genesisBlockPath='genesis.json'):
+			self.project_dir = project_dir
+			self.genesis_block_path = genesisBlockPath
+
+			# initialize chain if it doesn't exist already
+			try:
+				open('{}/{}'.format(project_dir, genesisBlockPath), 'r')
+			except:
+				assert genesisBlockPayload, 'Not in a valid project directory or no genesis block payload has been provided.'
+				create_genesis_block(genesisBlockPayload)
+				initialize_chain(project_dir, genesisBlockPath)
+
+		def start(self):
+			self.process = subprocess.Popen('geth --datadir {} --etherbase 0')
+			return self.process
+
+		def has_started(self):
+			if self.process:
+				return True
+			return False
+	instance = None
+	def __init__(self):
+		if not Chain.instance:
+			Chain.instance = Chain.__Chain()
+		#else:
+		#	Chain.instance.project_dir = project_dir
+	def __getattr__(self, name):
+		return getattr(self.instance, name)
 
 def create_genesis_block(genesisBlockPayload):
 	assert all(x in \
@@ -46,14 +62,14 @@ def create_genesis_block(genesisBlockPayload):
 	with open('genesis.json', 'w') as fp:
 		json.dump(genesisBlockPayload, fp)
 
-def initialize_chain(datadirPath, genesisBlockPath):
-	subprocess.run('geth --datadir ' + datadirPath + ' init ' + genesisBlockPath)
+def initialize_chain(project_dir, genesisBlockPath):
+	subprocess.run('geth --datadir ' + project_dir + ' init ' + genesisBlockPath)
 
 def run_generator():
 	if not utils.check_if_in_project():
 		# create a new chain!
 		print('=== Project Name ===')
-		projectDir = input('Name your new Hadron project: ')
+		project_dir = input('Name your new Hadron project: ')
 
 		while True:
 			print('\n=== Blockchain Settings ===')
@@ -100,9 +116,9 @@ def run_generator():
 				break
 			print('\n... Throwing away old data and starting fresh ...\n')
 
-		os.makedirs(projectDir, exist_ok=True)
-		PROJECT_DIR = projectDir
-		os.chdir(projectDir)
+		os.makedirs(project_dir, exist_ok=True)
+		PROJECT_DIR = project_dir
+		os.chdir(project_dir)
 		print('Directory created in: {}'.format(os.getcwd()))
 
 		create_genesis_block(genesis)
@@ -116,5 +132,3 @@ def run_generator():
 		accounts.create_account(user_input)
 	else:
 		print('Already in a project directory...')
-
-run_generator()
