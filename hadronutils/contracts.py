@@ -9,6 +9,16 @@ import utils
 import re
 import pprint
 
+class Contract:
+	address = None
+	name = None
+	deployed = None
+	def __init__(self, name=None, deployed=False, address=None):
+		if name:
+			self.name = name
+		self.deployed = deployed
+		self.address = address
+
 SEAGULL_OPEN = '{{'
 SEAGULL_CLOSE = '}}'
 
