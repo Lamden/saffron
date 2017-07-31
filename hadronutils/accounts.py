@@ -4,11 +4,15 @@ import random
 import pprint
 import json
 import os
+from web3 import Web3
+from web3.personal import Personal
 
 class Account:
-	def __init__(self, name=None, address=None):
+	def __init__(self, name=None, password=None, chain=None):
+		assert name != None and password != None and chain != None
+		# check if name already exists in db. if not, continue
+		self.address = chain.web3.personal.newAccount(password)
 		self.name = name
-		self.address = address
 		pass
 
 def create_account(password):

@@ -1,3 +1,8 @@
+import random
+import pprint
+import json
+import subprocess
+
 GENESIS_BLOCK_TEMPLATE = {
 	'config': {
 	    'chainId': 0,
@@ -66,49 +71,49 @@ def create_genesis_block(genesisBlockPayload):
 		json.dump(genesisBlockPayload, fp)
 
 def initialize_chain(project_dir, genesisBlockPath):
-	subprocess.run('geth --datadir ' + project_dir + ' init ' + genesisBlockPath)
+	subprocess.Popen('geth --datadir ' + project_dir + ' init ' + genesisBlockPath, shell=True)
 
 def run_generator():
-	if not utils.check_if_in_project():
+	if not check_if_in_project():
 		# create a new chain!
 		print('=== Project Name ===')
 		project_dir = input('Name your new Hadron project: ')
 
 		while True:
 			print('\n=== Blockchain Settings ===')
-			genesis = utils.GENESIS_BLOCK_TEMPLATE
+			genesis = GENESIS_BLOCK_TEMPLATE
 
 			# data formatting
 			user_input = input('Chain ID: ')
-			genesis['config']['chainId'] = utils.formatting(user_input)
+			genesis['config']['chainId'] = formatting(user_input)
 			print('Chain ID set to {}'.format(genesis['config']['chainId']))
 
 			user_input = input('Difficulty: ')
-			user_input = utils.formatting(user_input)
+			user_input = formatting(user_input)
 
-			if user_input > utils.INT16:
-				user_input = utils.INT16
+			if user_input > INT16:
+				user_input = INT16
 
 			genesis['difficulty'] = hex(user_input)
 			print('Difficulty set to {}'.format(genesis['difficulty']))
 
 			user_input = input('Gas Limit: ')
-			user_input = utils.formatting(user_input)
+			user_input = formatting(user_input)
 
-			if user_input > utils.INT16:
-				user_input = utils.INT16
+			if user_input > INT16:
+				user_input = INT16
 
 			genesis['gasLimit'] = hex(user_input)
 			print('Gas Limit set to {}'.format(genesis['gasLimit']))
 
 			print('\n=== Hashing Variables ===')
-			genesis['nonce'] = utils.generate_hex_string(16)
+			genesis['nonce'] = generate_hex_string(16)
 			print('Random nonce generated as {}'.format(genesis['nonce']))
 
-			genesis['mixhash'] = utils.generate_hex_string(64)
+			genesis['mixhash'] = generate_hex_string(64)
 			print('Random mix hash generated as {}'.format(genesis['mixhash']))
 
-			genesis['parentHash'] = utils.generate_hex_string(64)
+			genesis['parentHash'] = generate_hex_string(64)
 			print('Random parent hash generated as {}'.format(genesis['parentHash']))
 			
 			print('\n=== Generating Genesis Block ===')
@@ -135,3 +140,9 @@ def run_generator():
 		accounts.create_account(user_input)
 	else:
 		print('Already in a project directory...')
+
+def create_account(password):
+	with open('pass.temp', 'w') as fp:
+		fp.write(password)
+	proc = subprocess.Popen('geth --datadir . --password pass.temp account new', stdout=subprocess.PIPE, shell=True)
+	os.remove('pass.temp')
