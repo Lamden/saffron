@@ -6,7 +6,7 @@ import json
 import os
 
 class Account:
-	def __init__(self, name, address):
+	def __init__(self, name=None, address=None):
 		self.name = name
 		self.address = address
 		pass

@@ -9,51 +9,52 @@ import utils
 import re
 import pprint
 
-class Contract:
-	address = None
-	name = None
-	deployed = None
-	def __init__(self, name=None, deployed=False, address=None):
-		if name:
-			self.name = name
-		self.deployed = deployed
-		self.address = address
-
 SEAGULL_OPEN = '{{'
 SEAGULL_CLOSE = '}}'
 
 DEFAULT_CONTRACT_DIRECTORY = './contracts'
 
-def get_template_variables(filename):
-	file_string = None
-	with open(filename, 'r') as f:
-		file_string = f.read()
+class Contract:
+	def __init__(self, name=None, deployed=False, address=None):
+		if name:
+			self.name = name
+		self.deployed = deployed
+		self.address = address
+		self.abi = None
+		self.payload = None
 
-	variable_definition_starting_point = [m.start() for m in re.finditer(SEAGULL_OPEN, file_string)]
-	variable_definition_ending_point = [m.end() for m in re.finditer(SEAGULL_CLOSE, file_string)]
+	@classmethod
+	def get_template_variables(filename):
+		file_string = None
+		with open(filename, 'r') as f:
+			file_string = f.read()
 
-	template_variable_indexes = list(zip(variable_definition_starting_point, variable_definition_ending_point))
+		variable_definition_starting_point = [m.start() for m in re.finditer(SEAGULL_OPEN, file_string)]
+		variable_definition_ending_point = [m.end() for m in re.finditer(SEAGULL_CLOSE, file_string)]
 
-	variables = []
-	for var in template_variable_indexes:
-		variables.append(file_string[var[0]:var[1]].strip(SEAGULL_OPEN + SEAGULL_CLOSE))
+		template_variable_indexes = list(zip(variable_definition_starting_point, variable_definition_ending_point))
 
-	return variables
+		variables = []
+		for var in template_variable_indexes:
+			variables.append(file_string[var[0]:var[1]].strip(SEAGULL_OPEN + SEAGULL_CLOSE))
 
-def generate_new_contract(template_file_name, payload, name, contract_directory=DEFAULT_CONTRACT_DIRECTORY):
-	template_variables = get_template_variables(template_file_name)
-	assert all(x in template_variables for x in list(payload.keys()))
-	assert name != None
+		return variables
 
-	file_string = None
-	with open(template_file_name, 'r') as f:
-		file_string = f.read()
+	@classmethod
+	def generate_new_contract(template_file_name, payload, name, contract_directory=DEFAULT_CONTRACT_DIRECTORY):
+		template_variables = get_template_variables(template_file_name)
+		assert all(x in template_variables for x in list(payload.keys()))
+		assert name != None
 
-	for key in template_variables:
-		file_string = file_string.replace(SEAGULL_OPEN + key + SEAGULL_CLOSE, payload[key])
+		file_string = None
+		with open(template_file_name, 'r') as f:
+			file_string = f.read()
 
-	with open('{}/{}.sol'.format(contract_directory, name), 'w') as f:
-		f.write(file_string)
+		for key in template_variables:
+			file_string = file_string.replace(SEAGULL_OPEN + key + SEAGULL_CLOSE, payload[key])
+
+		with open('{}/{}.sol'.format(contract_directory, name), 'w') as f:
+			f.write(file_string)
 
 # print(generate_default_contract_code('Autoria'))
 # create_new_contract('Autoria')
