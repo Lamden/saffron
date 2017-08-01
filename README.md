@@ -41,3 +41,13 @@ $ echo 'pragma solidity ^0.4.11;contract mortal { address owner; function mortal
 Created the following files:
     ['greeter.abi', 'greeter.bin', 'mortal.abi', 'mortal.bin']
 ```
+
+#### running the tests
+
+```
+virtualenv venv_hadron
+source venv_hadron/bin/activate
+python setup.py develop
+pip install pytest
+py.tests tests
+```
