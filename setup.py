@@ -6,6 +6,8 @@ setup(name='hadronutils',
           'werkzeug',
           'gevent>=1.1.0',
           'gunicorn',
+          'web3',
+          'jinja2'
       ],
       entry_points={
           "console_scripts": [

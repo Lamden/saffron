@@ -5,9 +5,9 @@ import pprint
 import json
 import os
 
-from genesis import Chain, Database
-from utils import *
-from accounts import Account
+from hadronutils.genesis import Chain
+from hadronutils.utils import *
+from hadronutils.accounts import Account
 
 test_genesis_block = {'alloc': {},
  'coinbase': '0x0000000000000000000000000000000000000000',
@@ -23,8 +23,9 @@ test_genesis_block = {'alloc': {},
  'parentHash': '0x1f05d1e4d4a5b6556cb10b426eca46e8f9a374c7793f307928c39b88b084726e',
  'timestamp': '0x00'}
 
-chain = Chain(genesis_block_payload=test_genesis_block)
-chain.start()
-a = Account(name='hello', password='testing123', chain=chain)
-print(a)
-chain.stop()
+def test_chain():
+    chain = Chain(genesis_block_payload=test_genesis_block)
+    assert hasattr(chain, '_Chain__Chain')
+    assert hasattr(chain._Chain__Chain, 'has_started')
+    assert hasattr(chain._Chain__Chain, 'start')
+    assert hasattr(chain._Chain__Chain, 'stop')
