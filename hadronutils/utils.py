@@ -145,6 +145,7 @@ def run_generator():
 	else:
 		print('Already in a project directory...')
 
+# this should be added to the account class in some capacity
 def create_account(password):
 	with open('pass.temp', 'w') as fp:
 		fp.write(password)
@@ -158,9 +159,10 @@ def close_if_timeout(process, timeout=3000):
 	output = b''
 	time = 0
 	while time < timeout:
-		if output != process.stdout.read():
+		if output == process.stdout.read():
 			time += 1
 		else:
+			output = process.stdout.read()
 			time = 0
 		# sleep one millisecond
 		time.sleep(0.0001)

@@ -9,7 +9,7 @@ class Chain:
 		def __init__(self, project_dir='.', genesis_block_payload=None, genesis_block_path='genesis.json'):
 			self.project_dir = project_dir
 			self.genesis_block_path = genesis_block_path
-
+			self.database = Database()
 			# initialize chain if it doesn't exist already
 			try:
 				open('{}/{}'.format(project_dir, genesis_block_path), 'r')
@@ -43,7 +43,7 @@ class Chain:
 		return getattr(self.instance, name)
 
 class Database:
-	def __init__(self, connector='aux_info.db'):
+	def __init__(self, connector='directory.db'):
 		self.connection = sqlite3.connect(connector)
 		self.cursor = self.connection.cursor()
 
