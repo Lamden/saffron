@@ -1,7 +1,7 @@
 import os
 import accounts
 import sqlite3
-from web3 import Web3
+from web3 import Web3, KeepAliveRPCProvider
 from utils import *
 
 class Chain:
@@ -21,8 +21,12 @@ class Chain:
 
 		def start(self):
 			self.process = subprocess.Popen('geth --datadir {} --etherbase 0'.format(self.project_dir), shell=True)
-			self.web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
+			#self.web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
 			return self.process
+
+		def stop(self):
+			self.process.terminate()
+			return self.process.poll()
 
 		def has_started(self):
 			if self.process:

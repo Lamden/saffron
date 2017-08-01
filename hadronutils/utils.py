@@ -2,6 +2,10 @@ import random
 import pprint
 import json
 import subprocess
+import os
+import time
+from threading import Thread
+import re
 
 GENESIS_BLOCK_TEMPLATE = {
 	'config': {
@@ -145,4 +149,18 @@ def create_account(password):
 	with open('pass.temp', 'w') as fp:
 		fp.write(password)
 	proc = subprocess.Popen('geth --datadir . --password pass.temp account new', stdout=subprocess.PIPE, shell=True)
-	os.remove('pass.temp')
+	account_string = proc.stdout.read().decode('utf-8')
+	# return the regex account
+	return account_string[[m.end() for m in re.finditer('{', account_string)][0]:[m.start() for m in re.finditer('}', account_string)][0]]
+	#os.remove('pass.temp')
+
+def close_if_timeout(process, timeout=3000):
+	output = b''
+	time = 0
+	while time < timeout:
+		if output != process.stdout.read():
+			time += 1
+		else:
+			time = 0
+		# sleep one millisecond
+		time.sleep(0.0001)
