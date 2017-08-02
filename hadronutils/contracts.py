@@ -8,6 +8,8 @@ import subprocess
 from io import StringIO
 from genesis import Chain
 
+import web3
+from web3.eth import Eth
 from jinja2 import Environment
 from jinja2.nodes import Name
 
@@ -16,22 +18,28 @@ import utils
 
 DEFAULT_CONTRACT_DIRECTORY = './contracts'
 
-class Contract:
+class Contract():
 	chain = None
 	name = None
-	address = None
 	is_deployed = None
+	address = None
+	instance = None
 
 	def __init__(self):
 		self.chain = Chain()
 
+	def __str__(self):
+		return 'Contract {}, {}'.format(self.address if self.address else 'None', self.name if self.name else 'None')
+
 	def from_db(self, name=None, address=None):
 		assert self.chain, "No chain provided."
-		self = self.chain.database.select_contract(name=name, address=address)
+		self = Contract.from_db(name=name, address=address)
 
-	def deploy(self):
-		assert self.chain, "No chain provided."
-		pass
+	# def deploy(self):
+	# 	assert self.chain, "No chain provided."
+	# 	if not self.is_deployed:
+	# 		self.instance.deploy(self.address)
+	# 	pass
 
 	def load_sol_file(self, filename=None):
 		assert self.chain, "No chain provided."
@@ -49,7 +57,13 @@ class Contract:
 
 	@classmethod
 	def from_db(self, name=None, address=None):
-		return Chain().database.select_contract(name=name, address=address)
+		c = Chain().database.select_contract(name=name, address=address)
+		if c.is_deployed:
+			try:
+				c.instance = Eth.contract(name=c.name, address=c.address)
+			except:
+				pass
+		return c
 
 	@classmethod
 	def generate_new_contract(self, payload, contract_directory=DEFAULT_CONTRACT_DIRECTORY):
@@ -60,7 +74,3 @@ class Contract:
 		assert all(x in template_variables for x in list(payload.keys()))
 		template = Environment().from_string(sol_contract)
 		return template.render(payload)
-
-c = Contract()
-c.from_db(name='hello')
-print(c)

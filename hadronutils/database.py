@@ -15,9 +15,7 @@ class Database:
 
     def select_contract(self, name=None, address=None):
         assert name != None or address != None
-        
         sql = 'SELECT * FROM contracts WHERE'
-        
         if name:
             sql += ' name={}'.format(name)
         if address:
@@ -26,7 +24,7 @@ class Database:
         try:
             response = self.cursor.execute(sql)
         except Exception as e:
-            return e;
+            return None;
 
         assert len(response) <= 1
 
@@ -43,16 +41,12 @@ class Database:
         assert name != None or address != None
         
         sql = 'SELECT * FROM {} WHERE'.format(table)
-        
         if name:
             sql += ' name={}'.format(name)
         if address:
             sql += ' address={}'.format(address)
-
         response = self.cursor.execute(sql)
-
         assert len(response) <= 1
-
         try:
             return Account(name=response[0][0], address=response[0][1])
         except:
