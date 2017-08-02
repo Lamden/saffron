@@ -14,4 +14,3 @@ class Account:
 		# check if name already exists in db. if not, continue
 		self.address = utils.create_account(password)
 		self.name = name
-		pass

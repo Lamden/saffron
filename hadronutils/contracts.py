@@ -6,6 +6,7 @@ import random
 import argparse
 import subprocess
 from io import StringIO
+from genesis import Chain
 
 from jinja2 import Environment
 from jinja2.nodes import Name
@@ -16,19 +17,39 @@ import utils
 DEFAULT_CONTRACT_DIRECTORY = './contracts'
 
 class Contract:
-	def __init__(self, name=None, deployed=False, address=None):	
-		self.name = name
-		self.deployed = deployed
-		self.address = address
-		self.contract_name = None
-		self.abi = None
-		self.payload = None
+	chain = None
+	name = None
+	address = None
+	is_deployed = None
+
+	def __init__(self):
+		self.chain = Chain()
+
+	def from_db(self, name=None, address=None):
+		assert self.chain, "No chain provided."
+		self = self.chain.database.select_contract(name=name, address=address)
+
+	def deploy(self):
+		assert self.chain, "No chain provided."
+		pass
+
+	def load_sol_file(self, filename=None):
+		assert self.chain, "No chain provided."
+		pass
+
+	def load_tsol_file(self, filename=None, payload=None):
+		assert self.chain, "No chain provided."
+		pass
 
 	@classmethod
 	def get_template_variables(self, fo):
 		nodes = Environment().parse(fo.read()).body[0].nodes
 		var_names = [x.name for x in nodes if type(x) is Name]
 		return var_names
+
+	@classmethod
+	def from_db(self, name=None, address=None):
+		return Chain().database.select_contract(name=name, address=address)
 
 	@classmethod
 	def generate_new_contract(self, payload, contract_directory=DEFAULT_CONTRACT_DIRECTORY):
@@ -40,3 +61,6 @@ class Contract:
 		template = Environment().from_string(sol_contract)
 		return template.render(payload)
 
+c = Contract()
+c.from_db(name='hello')
+print(c)
