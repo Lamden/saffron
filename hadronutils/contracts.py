@@ -35,18 +35,22 @@ class Contract():
 		assert self.chain, "No chain provided."
 		self = Contract.from_db(name=name, address=address)
 
-	# def deploy(self):
-	# 	assert self.chain, "No chain provided."
-	# 	if not self.is_deployed:
-	# 		self.instance.deploy(self.address)
-	# 	pass
-
-	def load_sol_file(self, filename=None):
+	def load_sol_file(self, file=None):
 		assert self.chain, "No chain provided."
+		assert file, "No file provided"
+
+		self.sol = file.read()
+
 		pass
 
-	def load_tsol_file(self, filename=None, payload=None):
+	def load_tsol_file(self, file=None, payload=None):
 		assert self.chain, "No chain provided."
+		assert file and payload, "No file or payload provided"
+
+		payload['sol'] = file.read()
+
+		self.sol = Accounts.generate_new_contract(payload=payload)
+
 		pass
 
 	@classmethod
