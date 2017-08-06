@@ -16,7 +16,7 @@ from jinja2 import Environment
 from jinja2.nodes import Name
 
 import accounts
-import utils
+from hadronutils import utils
 
 DEFAULT_CONTRACT_DIRECTORY = './contracts'
 

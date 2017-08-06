@@ -5,8 +5,6 @@ import pytest
 import re
 from hadronutils import contracts
 
-
-
 Contract = contracts.Contract
 
 sol_contract = u'''

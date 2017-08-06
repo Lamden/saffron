@@ -1,4 +1,5 @@
 from . import (accounts,
                contracts,
                genesis,
-               utils)
+               utils,
+               database)

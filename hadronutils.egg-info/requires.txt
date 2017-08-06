@@ -1,3 +1,7 @@
 werkzeug
 gevent>=1.1.0
 gunicorn
+web3
+jinja2
+solc
+pytest

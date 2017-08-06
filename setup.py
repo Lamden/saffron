@@ -7,7 +7,9 @@ setup(name='hadronutils',
           'gevent>=1.1.0',
           'gunicorn',
           'web3',
-          'jinja2'
+          'jinja2',
+          'solc',
+          'pytest'
       ],
       entry_points={
           "console_scripts": [
