@@ -26,6 +26,9 @@ class Account:
 	@classmethod
 	def from_db(self, name=None, address=None):
 		assert name != None or address != None, 'Supply either a name or an address to query the DB with'
+
+		a = Account()
+		
 	#TODO
 	#fancy shit making interacting with the blockchain easy (get balance, transact, etc)
 	def balance(self):

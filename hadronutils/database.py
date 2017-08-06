@@ -9,7 +9,17 @@ class Database:
         # graceful initialization tries to create new tables as a test to see if this is a new DB or not
         try:
             self.cursor.execute('CREATE TABLE accounts (id integer primary key, name text, address text)')
-            self.cursor.execute('CREATE TABLE contracts (id integer primary key, name text, address text, boolean deployed)')
+            self.cursor.execute('''
+                CREATE TABLE contracts (
+                id integer primary key, 
+                name text, 
+                address text, 
+                deployed boolean,
+                abi text,
+                metadata text,
+                gas_estimates blob,
+                method_identifiers blob
+                )''')
         except:
             pass
 

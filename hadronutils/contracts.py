@@ -81,10 +81,25 @@ class Contract():
 		self.method_identifiers = output_json['contracts'][self.name][compiled_name]['evm']['methodIdentifiers']
 
 		#pickle the blobs and add them to the db
+		Chain().database.cursor.execute('''
+			INSERT INTO contracts VALUES (
+            name {}, 
+            abi {},
+            metadata {},
+            gas_estimates {},
+            method_identifiers {}
+            )'''.format(
+            	self.name,
+            	self.abi,
+            	self.bytecode,
+            	pickle.dumps(self.gas_estimates),
+            	pickle.dumps(self.method_identifiers)))
 
 		#deploy to the blockchain
+		address = Eth.sendTransaction('data' : self.bytecode)
 
 		#update the deployed and address to the db
+		Chain().database.cursor.execute('''UPDATE contracts SET address = {}, is_deployed = true WHERE name = {}'''.format(address, self.name))
 
 	@classmethod
 	def new(self, name):
