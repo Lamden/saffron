@@ -1,4 +1,5 @@
 import sqlite3
+from hadronutils.accounts import *
 
 class Database:
     
@@ -55,16 +56,19 @@ class Database:
             sql += ' name = "{}"'.format(name)
         if address:
             sql += ' address = "{}"'.format(address)
-        response = self.cursor.execute(sql)
+        self.cursor.execute(sql)
 
         try:
-            response = response.fetchone()[0]
+            response = self.cursor.fetchone()
         except:
+            print('response error')
             return None
         
+        print(response)
         try:
-            return Account(name=response[0][0], address=response[0][1])
-        except:
+            return Account(name=response[0], address=response[1])
+        except Exception as e:
+            print(e)
             return None
 
     def set_account(self, account=None):
@@ -76,7 +80,9 @@ class Database:
 
     def insert_account(self, account=None):
         assert account
-        self.cursor.execute('INSERT INTO accounts VALUES ("{}", "{}")'.format(account.name, account.address))
+        print('{}, {}'.format(account.address, account.name))
+        self.cursor.execute('INSERT INTO accounts(name, address) VALUES (?, ?)', (account.name, account.address))
+        self.connection.commit()
 
     def insert_contract(self, contract=None):
         assert contract

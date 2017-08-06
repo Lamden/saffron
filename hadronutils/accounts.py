@@ -11,6 +11,10 @@ from hadronutils.utils import *
 from hadronutils.genesis import *
 
 class Account:
+	def __init__(self, name=None, address=None):
+		self.name = name
+		self.address = address
+
 	@classmethod
 	def new(self, name=None, password=None, chain=None):
 		assert name != None and password != None and chain != None, 'Missing information needed to create an account'
@@ -18,9 +22,7 @@ class Account:
 		assert Chain().database.select_account(name) is None, 'Account with the same name already exists in the database'
 		address = create_account(password)
 		
-		a = Account()
-		a.address = address
-		a.name = name
+		a = Account(name=name, address=address)
 
 		print('{}, {}'.format(a.address, a.name))
 
@@ -30,8 +32,9 @@ class Account:
 	@classmethod
 	def from_db(self, name=None, address=None):
 		assert name != None or address != None, 'Supply either a name or an address to query the DB with'
-
-		a = Account()
+		print('{}, {}'.format(address, name))
+		a = Chain().database.select_account(name=name, address=address)
+		return a
 		
 	#TODO
 	#fancy shit making interacting with the blockchain easy (get balance, transact, etc)
