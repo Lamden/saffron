@@ -15,8 +15,8 @@ from solc import compile_source, compile_standard
 from jinja2 import Environment
 from jinja2.nodes import Name
 
-import accounts
-from hadronutils import utils
+from hadronutils.accounts import *
+from hadronutils.utils import *
 
 DEFAULT_CONTRACT_DIRECTORY = './contracts'
 
@@ -146,3 +146,4 @@ class Contract():
 		assert all(x in template_variables for x in list(payload.keys()))
 		template = Environment().from_string(sol_contract)
 		return template.render(payload)
+

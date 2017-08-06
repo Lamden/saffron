@@ -7,7 +7,7 @@ import os
 from web3 import Web3
 from web3.personal import Personal
 from web3.eth import Eth
-import utils
+from hadronutils.utils import *
 
 class Account:
 	@classmethod

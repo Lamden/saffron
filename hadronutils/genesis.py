@@ -3,8 +3,8 @@ import accounts
 import sqlite3
 from web3 import Web3, KeepAliveRPCProvider
 import web3
-from utils import *
-from database import Database
+from hadronutils.utils import *
+from hadronutils.database import *
 
 class Chain:
 	class __Chain:
