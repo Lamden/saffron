@@ -8,7 +8,7 @@ setup(name='hadronutils',
           'gunicorn',
           'web3',
           'jinja2',
-          'solc',
+          'py-solc',
           'pytest'
       ],
       entry_points={

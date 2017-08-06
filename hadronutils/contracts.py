@@ -6,7 +6,6 @@ import random
 import argparse
 import subprocess
 from io import StringIO
-from genesis import Chain
 
 import web3
 from web3.eth import Eth
@@ -17,12 +16,22 @@ from jinja2.nodes import Name
 
 from hadronutils.accounts import *
 from hadronutils.utils import *
+from hadronutils.genesis import Chain
 
 DEFAULT_CONTRACT_DIRECTORY = './contracts'
 
 class Contract():
 	def __init__(self):
 		self.chain = Chain()
+		self.name = None
+		self.is_deployed = None
+		self.sol = None
+		self.address = None
+		self.abi = None
+		self.metadata = None
+		self.bytecode = None
+		self.gas_estimate = None
+		self.method_identifiers = None
 
 	def __str__(self):
 		return 'Contract {}, {}'.format(self.address if self.address else 'None', self.name if self.name else 'None')
@@ -96,7 +105,7 @@ class Contract():
 				pickle.dumps(self.method_identifiers)))
 
 		#deploy to the blockchain
-		address = Eth.sendTransaction('data' : self.bytecode)
+		address = Eth.sendTransaction({'data' : self.bytecode})
 		instance = Eth.contract(address)
 
 		#update the deployed and address to the db and an instance for pulling and interacting with the contract again

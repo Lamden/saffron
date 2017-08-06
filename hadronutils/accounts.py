@@ -8,6 +8,7 @@ from web3 import Web3
 from web3.personal import Personal
 from web3.eth import Eth
 from hadronutils.utils import *
+from hadronutils.genesis import *
 
 class Account:
 	@classmethod
@@ -15,13 +16,16 @@ class Account:
 		assert name != None and password != None and chain != None, 'Missing information needed to create an account'
 		# check if name already exists in db. if not, continue
 		assert Chain().database.select_account(name) is None, 'Account with the same name already exists in the database'
-		address = utils.create_account(password)
+		address = create_account(password)
 		
 		a = Account()
 		a.address = address
 		a.name = name
 
+		print('{}, {}'.format(a.address, a.name))
+
 		Chain().database.insert_account(a)
+		return a
 
 	@classmethod
 	def from_db(self, name=None, address=None):

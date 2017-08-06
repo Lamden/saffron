@@ -8,11 +8,10 @@ class Database:
 
         # graceful initialization tries to create new tables as a test to see if this is a new DB or not
         try:
-            self.cursor.execute('CREATE TABLE accounts (id integer primary key, name text, address text)')
+            self.cursor.execute('CREATE TABLE accounts (name text primary key, address text)')
             self.cursor.execute('''
-                CREATE TABLE contracts (
-                id integer primary key, 
-                name text, 
+                CREATE TABLE contracts ( 
+                name text primary key, 
                 address text, 
                 deployed boolean,
                 abi text,
@@ -28,9 +27,9 @@ class Database:
         assert name != None or address != None
         sql = 'SELECT * FROM contracts WHERE'
         if name:
-            sql += ' name={}'.format(name)
+            sql += ' name = "{}"'.format(name)
         if address:
-            sql += ' address={}'.format(address)
+            sql += ' address = "{}"'.format(address)
 
         try:
             response = self.cursor.execute(sql)
@@ -51,13 +50,18 @@ class Database:
     def select_account(self, name=None, address=None):
         assert name != None or address != None
         
-        sql = 'SELECT * FROM {} WHERE'.format(table)
+        sql = 'SELECT * FROM accounts WHERE'
         if name:
-            sql += ' name={}'.format(name)
+            sql += ' name = "{}"'.format(name)
         if address:
-            sql += ' address={}'.format(address)
+            sql += ' address = "{}"'.format(address)
         response = self.cursor.execute(sql)
-        assert len(response) <= 1
+
+        try:
+            response = response.fetchone()[0]
+        except:
+            return None
+        
         try:
             return Account(name=response[0][0], address=response[0][1])
         except:
@@ -72,8 +76,8 @@ class Database:
 
     def insert_account(self, account=None):
         assert account
-        self.cursor.execute('INSERT INTO accounts VALUES (name {}, address {})'.format(account.name, account.address))
+        self.cursor.execute('INSERT INTO accounts VALUES ("{}", "{}")'.format(account.name, account.address))
 
     def insert_contract(self, contract=None):
         assert contract
-        self.cursor.execute('INSERT INTO contracts VALUES (name {}, address {})'.format(contract.name, contract.address, contract.deployed))
+        self.cursor.execute('INSERT INTO contracts VALUES (name "{}", address "{}")'.format(contract.name, contract.address, contract.deployed))

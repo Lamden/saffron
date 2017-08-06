@@ -89,15 +89,14 @@ contract {{contract_name}} {
 
 def test_contracts():
     c = Contract()
-    assert hasattr(c, 'contract_name')
-    assert hasattr(c, 'deployed')
+    assert hasattr(c, 'name')
+    assert hasattr(c, 'is_deployed')
     assert hasattr(c, 'address')
     assert hasattr(c, 'abi')
-    assert hasattr(c, 'payload')
-    assert hasattr(c, 'get_template_variables')
-    assert hasattr(c, 'generate_new_contract')
+    assert hasattr(Contract(), 'get_template_variables')
+    assert hasattr(Contract(), 'generate_new_contract')
     assert c.name == None
-    assert c.deployed == False
+    assert c.is_deployed == None
     assert c.address == None
 
 

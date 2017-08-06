@@ -19,6 +19,6 @@ def chain(monkeypatch): # monkeypatch is magically injected
     return Chain()
 
 def test_accounts(chain):
-    a = Account(name='hello', password='testing123', chain=chain)
-    assert hasattr(a, 'address')
-    assert hasattr(a, 'name')
+    a = Account.new(name='hello', password='testing123', chain=chain)
+    assert hasattr(a, 'address'), 'No address'
+    assert hasattr(a, 'name'), 'No name'
