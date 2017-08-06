@@ -18,7 +18,8 @@ class Database:
                 abi text,
                 metadata text,
                 gas_estimates blob,
-                method_identifiers blob
+                method_identifiers blob,
+                instance blob
                 )''')
         except:
             pass
