@@ -1,16 +1,10 @@
 import sqlite3
 from hadronutils.accounts import *
 
-class Database:
-    
-    def __init__(self, connector='directory.db'):
-        self.connection = sqlite3.connect(connector)
-        self.cursor = self.connection.cursor()
 
-        # graceful initialization tries to create new tables as a test to see if this is a new DB or not
-        try:
-            self.cursor.execute('CREATE TABLE accounts (name text primary key, address text)')
-            self.cursor.execute('''
+create_accounts = 'CREATE TABLE accounts (name text primary key, address text)'
+
+create_contracts = '''
                 CREATE TABLE contracts ( 
                 name text primary key, 
                 address text, 
@@ -20,70 +14,64 @@ class Database:
                 gas_estimates blob,
                 method_identifiers blob,
                 instance blob
-                )''')
-        except:
-            pass
+                )'''
 
-    def select_contract(self, name=None, address=None):
-        assert name != None or address != None
-        sql = 'SELECT * FROM contracts WHERE'
-        if name:
-            sql += ' name = "{}"'.format(name)
-        if address:
-            sql += ' address = "{}"'.format(address)
+select_from = 'SELECT * FROM {table} WHERE {name} {address}'.format
 
-        try:
-            response = self.cursor.execute(sql)
-        except Exception as e:
-            return None;
+connection = sqlite3.connect('directory.db')
+cursor = connection.cursor()
 
-        assert len(response) <= 1
+# graceful initialization tries to create new tables as a test to see if this is a new DB or not
+try:
+    cursor.execute(create_table)
+    cursor.execute(create_contracts)
+except:
+    pass
 
-        try:
-            c = Contract()
-            c.name = response[0][0]
-            c.response = response[0][1]
-            c.is_deployed = response[0][2]
-            return c
-        except:
-            return None
+def exec(sql):
+    try:
+        response = cursor.execute(sql)
+    except Exception as e:
+        return None;
 
-    def select_account(self, name=None, address=None):
-        assert name != None or address != None
-        
-        sql = 'SELECT * FROM accounts WHERE'
-        if name:
-            sql += ' name = "{}"'.format(name)
-        if address:
-            sql += ' address = "{}"'.format(address)
-        self.cursor.execute(sql)
+    assert len(response) <= 1
+    return response
 
-        try:
-            response = self.cursor.fetchone()
-        except:
-            print('response error')
-            return None
-        
-        print(response)
-        try:
-            return Account(name=response[0], address=response[1])
-        except Exception as e:
-            print(e)
-            return None
+def name_or_address(name, address):
+    name = ' name = "{}"'.format(name) if name else ''
+    address = ' address = "{}"'.format(address) if address else ''
+    assert name != None or address != None
+    return name, address
 
-    def set_account(self, account=None):
-        assert account
+def init_contract(name=None, address=None, table='contracts'):
+    name, address = name_or_address(name, address)
+    try:
+        c = Contract()
+        # XXX: is this a security risk if users are able to submit "name" or "address"
+        # XXX: see ? syntax for sql queries for proper escaping
+        c.name, c.response, c.is_deployed = next(exec(select_from(table=table, name=name, address=address)))
+        return c
+    except Exception as e:
+        raise ValueError('Unable to initialize Contract: \n{e}\n'.format(e=str(e)))
 
-        pass
-    def set_contract(self, contract=None):
-        pass
+def init_account(name=None, address=None, table='accounts'):
+    name, address = name_or_address(name, address)
+    try:
+        _id, name, address = next(exec(select_from(table=table, name=name, address=address)))
+    except Exception as e:
+        raise ValueError('Unable to find Account with values: {name} {address}'.format(name=name, address=address))
+    try:
+        return Account(name=name, address=address)
+    except Exception as e:
+        return ValueError('Unable to initialize Account with values: {name} {address}'.format(name=name, address=address))
 
-    def insert_account(self, account=None):
-        assert account
-        print('{}, {}'.format(account.address, account.name))
-        self.cursor.execute('INSERT INTO accounts(name, address) VALUES (?, ?)', (account.name, account.address))
-        self.connection.commit()
+def insert_account(name, address):
+    assert name, address
+    cursor.execute('INSERT INTO accounts(name, address) VALUES (?, ?)', (name, address))
+    connection.commit()
 
-    def insert_contract(self, contract=None):
-        assert contract
-        self.cursor.execute('INSERT INTO contracts VALUES (name "{}", address "{}")'.format(contract.name, contract.address, contract.deployed))
+def insert_contract(contract=None):
+    assert contract
+    cursor.execute('INSERT INTO contracts VALUES (name "{}", address "{}")'.format(contract.name, contract.address, contract.deployed))
+
+

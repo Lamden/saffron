@@ -4,16 +4,16 @@ import sqlite3
 from web3 import Web3, KeepAliveRPCProvider
 import web3
 
-from hadronutils.accounts import *
-from hadronutils.utils import *
-from hadronutils.database import *
+from hadronutils.accounts import Account
+from hadronutils.utils import create_genesis_block, initialize_chain, create_account
+from hadronutils import database
 
-class Chain:
+class MemoizedChain:
 	class __Chain:
 		def __init__(self, project_dir='.', genesis_block_payload=None, genesis_block_path='genesis.json'):
 			self.project_dir = project_dir
 			self.genesis_block_path = genesis_block_path
-			self.database = Database()
+			self.database = database
 			# initialize chain if it doesn't exist already
 			try:
 				open('{}/{}'.format(project_dir, genesis_block_path), 'r')
@@ -45,3 +45,5 @@ class Chain:
 		#	Chain.instance.project_dir = project_dir
 	def __getattr__(self, name):
 		return getattr(self.instance, name)
+
+Chain = MemoizedChain
