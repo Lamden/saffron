@@ -1,0 +1,24 @@
+# https://travis-ci.org/tornadoweb/tornado
+language: python
+python:
+    - 2.7.8
+    - 2.7
+    - pypy
+    - 3.3
+    - 3.4
+    - 3.5
+    - 3.6
+    - nightly
+    - pypy3
+
+install: 
+  - pip install codecov virtualenv && python setup.py install
+after_success:
+    - codecov
+# This reportedly works around an issue downloading packages from pypi on
+# travis.  Consider removing this after the underlying issue is fixed.
+# https://github.com/travis-ci/travis-ci/issues/2389
+sudo: false
+matrix:
+    fast_finish: true
+
