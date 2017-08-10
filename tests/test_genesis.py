@@ -25,7 +25,7 @@ test_genesis_block = {'alloc': {},
 
 def test_chain():
     chain = Chain(genesis_block_payload=test_genesis_block)
-    assert hasattr(chain, '_Chain__Chain')
-    assert hasattr(chain._Chain__Chain, 'has_started')
-    assert hasattr(chain._Chain__Chain, 'start')
-    assert hasattr(chain._Chain__Chain, 'stop')
+    assert hasattr(chain, '_MemoizedChain__Chain')
+    assert hasattr(chain._MemoizedChain__Chain, 'has_started')
+    assert hasattr(chain._MemoizedChain__Chain, 'start')
+    assert hasattr(chain._MemoizedChain__Chain, 'stop')

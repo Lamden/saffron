@@ -42,24 +42,24 @@ def exec_sql(sql):
 def name_or_address(name, address):
     name = ' name = "{}"'.format(name) if name else ''
     address = ' address = "{}"'.format(address) if address else ''
-    assert name != None or address != None
+    assert name != '' or address != ''
     return name, address
 
-def init_contract(name=None, address=None, table='contracts'):
-    name, address = name_or_address(name, address)
+def contract_exists(name=None, address=None, table='contracts'):
+    _name, _address = name_or_address(name, address)
     try:
-        c = Contract()
         # XXX: is this a security risk if users are able to submit "name" or "address"
         # XXX: see ? syntax for sql queries for proper escaping
-        c.name, c.response, c.is_deployed = next(exec_sql(select_from(table=table, name=name, address=address)))
-        return c
+        return next(exec_sql(select_from(table=table, name=_name, address=_address)))
+    except StopIteration:
+        return None, None    
     except Exception as e:
-        raise ValueError('Unable to initialize Contract: \n{e}\n'.format(e=str(e)))
+        raise e
 
 def account_exists(name=None, address=None, table='accounts'):
-    name, address = name_or_address(name, address)
+    _name, _address = name_or_address(name, address)
     try:
-        return next(exec_sql(select_from(table=table, name=name, address=address)))
+        return next(exec_sql(select_from(table=table, name=_name, address=_address)))
     except StopIteration:
         return None, None    
     except Exception as e:

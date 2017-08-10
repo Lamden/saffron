@@ -2,8 +2,10 @@
 # from bowie import config
 # from bowie.download import proxies
 import pytest
-import re
+import re, json
 from hadronutils import contracts
+from tempfile import NamedTemporaryFile as ntf
+import uuid
 
 Contract = contracts.Contract
 
@@ -48,7 +50,6 @@ contract {{contract_name}} {
             && balances[_to] + _amount > balances[_to]) {
             balances[msg.sender] -= _amount;
             balances[_to] += _amount;
-            Transfer(msg.sender, _to, _amount);
             return true;
         } else {
             return false;
@@ -67,7 +68,6 @@ contract {{contract_name}} {
             balances[_from] -= _amount;
             allowed[_from][msg.sender] -= _amount;
             balances[_to] += _amount;
-            Transfer(_from, _to, _amount);
             return true;
         } else {
             return false;
@@ -76,7 +76,6 @@ contract {{contract_name}} {
 
     function approve(address _spender, uint256 _amount) returns (bool success) {
         allowed[msg.sender][_spender] = _amount;
-        Approval(msg.sender, _spender, _amount);
         return true;
     }
  
@@ -86,39 +85,38 @@ contract {{contract_name}} {
 }
 '''
 
-
-def test_contracts():
-    c = Contract()
-    assert hasattr(c, 'name')
-    assert hasattr(c, 'is_deployed')
-    assert hasattr(c, 'address')
-    assert hasattr(c, 'abi')
-    assert hasattr(Contract(), 'get_template_variables')
-    assert hasattr(Contract(), 'generate_new_contract')
-    assert c.name == None
-    assert c.is_deployed == None
-    assert c.address == None
-
-
-def test_get_template_variables():
-    from io import StringIO
-    c = Contract()
-    var_names = c.get_template_variables(StringIO(sol_contract))
-    assert var_names == ['solidity_version', 'contract_name', 'symbol', 'asset_name', 'decimals', '_totalSupply']
-
-
-def test_generate_new_contract():
-    'symbol', 'name', 'decimals', '_totalSupply'
-    payload = {'asset_name': 'TEST',
+payload = {'asset_name': 'TEST',
     'contract_name': 'Something',
     'solidity_version': '^0.4.11',
     'decimals': 18,
     'symbol': 'TST',
     '_totalSupply': 100000000000000000000000,
     'sol': sol_contract}
-    c = Contract()
-    test_render = '''\npragma solidity ^0.4.11;\n\ncontract Something {\n    string public constant symbol = "TST";\n    string public constant asset_name = "TEST";\n    uint8 public constant decimals = 18;\n    uint256 _totalSupply = 100000000000000000000000;\n\n '''
-    tr = c.generate_new_contract(payload)
-    assert test_render in tr
+
+def test_contracts():
+    new_contract = str(uuid.uuid1())
+    with ntf() as t:
+        c_name, rendered = contracts.render_contract(payload.copy())
+        t.write(rendered)
+        t.seek(0)
+        c = Contract(new_contract, t.name)
+        assert hasattr(c, 'abi')
+        assert hasattr(c, 'address')
+        assert hasattr(c, 'bytecode')
+        assert hasattr(c, 'compiled_name')
+        assert hasattr(c, 'contracts')
+        assert hasattr(c, 'deploy')
+        assert hasattr(c, 'from_chain')
+        assert hasattr(c, 'gas_estimate')
+        assert hasattr(c, 'instance')
+        assert hasattr(c, 'is_deployed')
+        assert hasattr(c, 'metadata')
+        assert hasattr(c, 'method_identifiers')
+        assert hasattr(c, 'name')
+        assert hasattr(c, 'output_json')
+        assert hasattr(c, 'sol')
+        assert hasattr(c, 'template_json')
+        assert c.__dict__['name'] == new_contract
+        assert c.__dict__['gas_estimate'] == {u'creation': {u'executionCost': u'20627', u'totalCost': u'611627', u'codeDepositCost': u'591000'}, u'external': {u'approve(address,uint256)': u'20468', u'symbol()': u'694', u'balanceOf(address)': u'637', u'totalSupply()': u'414', u'FixedSupplyToken()': u'41108', u'owner()': u'563', u'allowance(address,address)': u'869', u'asset_name()': u'628', u'transfer(address,uint256)': u'42094', u'transferFrom(address,address,uint256)': u'62799', u'decimals()': u'261'}}
 
 

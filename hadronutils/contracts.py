@@ -10,13 +10,12 @@ from io import StringIO
 import web3
 from web3.eth import Eth
 from solc import compile_source, compile_standard
-
 from jinja2 import Environment
 from jinja2.nodes import Name
 
 from hadronutils.accounts import Account
-from hadronutils.utils import *
 from hadronutils.genesis import Chain
+from hadronutils import database
 
 DEFAULT_CONTRACT_DIRECTORY = './contracts'
 
@@ -38,21 +37,19 @@ update_contracts_sql = '''
 			WHERE 
 			name = {}'''.format
 
-input_json = '''{
-			'language': 'Solidity',
-			'sources': {
-				{name}: {
-					'content': {sol}
+input_json = '''{"language": "Solidity", "sources": {
+				"{{name}}": {
+					"content": {{sol}}
 				}
 			},
-			'settings': {
-				'outputSelection': {
-					'*': {
-						'*': [ 'metadata', 'evm.bytecode', 'abi', 'evm.bytecode.opcodes', 'evm.gasEstimates', 'evm.methodIdentifiers' ]
+			"settings": {
+				"outputSelection": {
+					"*": {
+						"*": [ "metadata", "evm.bytecode", "abi", "evm.bytecode.opcodes", "evm.gasEstimates", "evm.methodIdentifiers" ]
 					}
 				}
 			}
-		}'''.format
+		}'''
 
 def insert_contract(name, abi, bytecode, gas_estimates, method_identifiers):
 	#pickle the blobs and add them to the db
@@ -90,33 +87,30 @@ def load_tsol_file(file=None, payload=None):
 	return name, rendered_contract
 
 def name_is_unique(name):
-	return True if Contract().from_db(name) != None else False
+	_name, _address = database.contract_exists(name=name)
+	if _name is None and _address is None:
+		return True
+	return False
 
 def load_sol_file(file=None):
 	assert chain, 'No chain provided.'
 	assert file, 'No file provided'
 	return file.read()
 
-def from_db(self, name=None, address=None):
-	c = Chain().database.select_contract(name=name, address=address)
-	if c.is_deployed:
-		try:
-			c.instance = Eth.contract(address=c.address)
-		except:
-			c = None
-	return c
-
 
 class Contract():
 	def __init__(self, name, sol_file_path):
 		assert name != None, 'A name identifier must be provided to create a new contract instance.'
-		assert name_is_unique(name), 'A unique identifier must be provided.'
+		_name, _address = database.contract_exists(name=name)
+		assert _name is None and _address is None
 		self.name = name
 		self.is_deployed = None
-		self.sol = load_sol_file(sol_file_path)
-		self.output_json = compile_standard(json.loads(input_json.format(name=self.name, sol=self.sol)))
-		self.compiled_name = list(output_json['contracts'][self.name].keys())[0]
-		self.contracts = output_json['contracts'][self.name][compiled_name]
+		with open(sol_file_path) as f:
+			self.sol = load_sol_file(f)
+		self.template_json = Environment().from_string(input_json).render(name=self.name, sol=json.dumps(self.sol))
+		self.output_json = compile_standard(json.loads(self.template_json))
+		self.compiled_name = list(self.output_json['contracts'][self.name].keys())[0]
+		self.contracts = self.output_json['contracts'][self.name][self.compiled_name]
 		self.abi = self.contracts['abi']
 		self.metadata = self.contracts['metadata']
 		self.bytecode = self.contracts['evm']['deployedBytecode']['object']
