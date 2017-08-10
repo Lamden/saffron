@@ -4,7 +4,6 @@ import sqlite3
 from web3 import Web3, KeepAliveRPCProvider
 import web3
 
-from hadronutils.accounts import Account
 from hadronutils.utils import create_genesis_block, initialize_chain, create_account
 from hadronutils import database
 
