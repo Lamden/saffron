@@ -1,7 +1,7 @@
 import pytest
-from hadronutils.accounts import *
-from hadronutils.genesis import *
-from hadronutils.database import *
+from hadronutils.accounts import Account
+from hadronutils.genesis import Chain
+from hadronutils.database import insert_account
 import uuid
 
 @pytest.fixture
@@ -21,17 +21,18 @@ def chain(monkeypatch): # monkeypatch is magically injected
     return Chain()
 
 def test_accounts(chain):
-    a = Account.new(name='hello', password='testing123', chain=chain)
+    new_account = str(uuid.uuid1())
+    a = Account(name=new_account, password='testing123', chain=chain)
     assert hasattr(a, 'address'), 'No address'
+    assert hasattr(a, 'balance'), 'No balance'
     assert hasattr(a, 'name'), 'No name'
+    with open('pass.temp') as f:
+        p = f.read()
+        assert p == 'testing123'
 
 def test_account_stored_in_db_when_created():
-    a = Account.new(name=str(uuid.uuid1()), password='doesnt_matter', chain=Chain())
-    #b = Chain().database.cursor.execute('''SELECT * FROM accounts WHERE name = "{}"'''.format(a.name))
-    #print(b.fetchone()[0])
-    b = Account.from_db(name=a.name)
-
-    assert a != None, 'New Account not created'
-    assert b != None, 'New Account not pulled from the db'
-    assert a.name == b.name, 'Names are not equal'
-    assert a.address == b.address, 'Address are not equal'
+    new_account = str(uuid.uuid1())
+    a = Account(name=new_account, password='doesnt_matter', chain=Chain())
+    b = Account(name=new_account, password='doesnt_matter', chain=Chain())
+    assert a._new_account
+    assert not b._new_account
