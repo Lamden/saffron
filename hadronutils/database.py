@@ -1,5 +1,5 @@
 import sqlite3
-import os
+import os, logging
 from hadronutils.settings import DB_FILE
 create_accounts = 'CREATE TABLE accounts (name text primary key, address text)'
 
@@ -18,9 +18,10 @@ create_contracts = '''
 select_from = 'SELECT * FROM {table} WHERE {name} {address}'.format
 connection = None
 cursor = None
-
+log = logging.getLogger(__file__)
 # graceful initialization tries to create new tables as a test to see if this is a new DB or not
 def init_dbs(sqls):
+    log.info('Opening db: {}'.format(os.path.join(DB_FILE)))
     connection = sqlite3.connect(os.path.join(DB_FILE))
     cursor = connection.cursor()
     for s in sqls:
