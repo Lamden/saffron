@@ -1,1 +1,1 @@
-from . import (accounts, contracts, genesis, utils, database, settings)
+from . import (settings, accounts, contracts, genesis, utils, database)

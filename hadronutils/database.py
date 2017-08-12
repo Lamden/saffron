@@ -16,8 +16,7 @@ create_contracts = '''
                 )'''
 select_from = 'SELECT * FROM {table} WHERE {name} {address}'.format
 log = logging.getLogger(__file__)
-log.info('Opening db: {}'.format(DB_FILE))
-connection = connection = sqlite3.connect(DB_FILE)
+connection = sqlite3.connect(DB_FILE)
 cursor = cursor = connection.cursor()
 
 # graceful initialization tries to create new tables as a test to see if this is a new DB or not
@@ -29,7 +28,9 @@ def init_dbs(sqls):
             if 'already exists' in e.message:
                 pass
             else:
-                raise 
+                raise
+
+
 
 def exec_sql(sql):
     try:
