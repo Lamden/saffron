@@ -1,2 +1,1 @@
-import accounts, contracts, genesis, utils, database, settings
-__all__ = ['accounts', 'contracts', 'genesis', 'utils', 'database', 'settings']
+from . import (accounts, contracts, genesis, utils, database, settings)

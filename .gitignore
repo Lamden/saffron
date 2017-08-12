@@ -104,3 +104,5 @@ directory.db
 genesis.json
 geth/
 keystore/
+test_project
+*.pyc
