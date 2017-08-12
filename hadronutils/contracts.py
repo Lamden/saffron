@@ -78,7 +78,6 @@ def render_contract(payload, contract_directory=DEFAULT_CONTRACT_DIRECTORY):
 	return name, template.render(payload)
 
 def load_tsol_file(file=None, payload=None):
-	assert chain, 'No chain provided.'
 	assert file and payload, 'No file or payload provided.'
 	payload['sol'] = file.read()
 	name, rendered_contract = render_contract(payload=payload)
@@ -91,7 +90,6 @@ def name_is_unique(name):
 	return False
 
 def load_sol_file(file=None):
-	assert chain, 'No chain provided.'
 	assert file, 'No file provided'
 	return file.read()
 

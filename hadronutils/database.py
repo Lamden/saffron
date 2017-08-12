@@ -14,16 +14,14 @@ create_contracts = '''
                 method_identifiers blob,
                 instance blob
                 )'''
-#https://docs.python.org/3/library/configparser.html
 select_from = 'SELECT * FROM {table} WHERE {name} {address}'.format
-connection = None
-cursor = None
 log = logging.getLogger(__file__)
+log.info('Opening db: {}'.format(DB_FILE))
+connection = connection = sqlite3.connect(DB_FILE)
+cursor = cursor = connection.cursor()
+
 # graceful initialization tries to create new tables as a test to see if this is a new DB or not
 def init_dbs(sqls):
-    log.info('Opening db: {}'.format(os.path.join(DB_FILE)))
-    connection = sqlite3.connect(os.path.join(DB_FILE))
-    cursor = connection.cursor()
     for s in sqls:
         try:
             cursor.execute(s)
@@ -55,7 +53,7 @@ def contract_exists(name=None, address=None, table='contracts'):
     except StopIteration:
         return None, None    
     except Exception as e:
-        raise e
+        return None, None
 
 def account_exists(name=None, address=None, table='accounts'):
     _name, _address = name_or_address(name, address)
@@ -64,7 +62,7 @@ def account_exists(name=None, address=None, table='accounts'):
     except StopIteration:
         return None, None    
     except Exception as e:
-        raise e
+        return None, None
 
 def init_account(name=None, address=None, table='accounts'):
     try:

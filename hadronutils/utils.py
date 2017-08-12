@@ -6,7 +6,6 @@ import os
 import time
 from threading import Thread
 import re
-from hadronutils import accounts
 
 GENESIS_BLOCK_TEMPLATE = {
 	'config': {
