@@ -98,3 +98,5 @@ venv_*
 
 # mypy
 .mypy_cache/
+
+/test_project
