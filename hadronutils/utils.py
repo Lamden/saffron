@@ -6,6 +6,7 @@ import os
 import time
 from threading import Thread
 import re
+from hadronutils import settings
 
 GENESIS_BLOCK_TEMPLATE = {
 	'config': {
@@ -150,9 +151,9 @@ def run_generator():
 
 # this should be added to the account class in some capacity
 def create_account(password):
-	with open('pass.temp', 'w') as fp:
+	with open(os.path.join(settings.WORKING_DIR, 'pass.temp'), 'w') as fp:
 		fp.write(password)
-	proc = subprocess.Popen('geth --datadir . --password pass.temp account new', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+	proc = subprocess.Popen('geth --datadir {} --password pass.temp account new'.format(settings.WORKING_DIR), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 	account_string = proc.stdout.read().decode('utf-8')
 	# return the regex account
 	return account_string[[m.end() for m in re.finditer('{', account_string)][0]:[m.start() for m in re.finditer('}', account_string)][0]]

@@ -1,7 +1,8 @@
-import pytest
+import pytest, os
 from hadronutils.accounts import Account
 from hadronutils.genesis import Chain
 from hadronutils.database import insert_account
+from hadronutils.settings import WORKING_DIR
 import uuid
 
 @pytest.fixture
@@ -26,7 +27,7 @@ def test_accounts(chain):
     assert hasattr(a, 'address'), 'No address'
     assert hasattr(a, 'balance'), 'No balance'
     assert hasattr(a, 'name'), 'No name'
-    with open('pass.temp') as f:
+    with open(os.path.join(WORKING_DIR, 'pass.temp')) as f:
         p = f.read()
         assert p == 'testing123'
 
