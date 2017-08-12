@@ -75,8 +75,8 @@ def create_genesis_block(genesisBlockPayload):
 	with open(os.path.join(settings.WORKING_DIR, 'genesis.json'), 'w') as fp:
 		json.dump(genesisBlockPayload, fp)
 
-def initialize_chain(project_dir, genesisBlockPath):
-	subprocess.Popen('geth --datadir ' + settings.WORKING_DIR + ' init ' + genesisBlockPath, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+def initialize_chain(project_dir, genesisBlockFp):
+	subprocess.Popen('geth --datadir ' + settings.WORKING_DIR + ' init ' + os.path.join(settings.WORKING_DIR, genesisBlockFp), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 def run_generator():
 	if not check_if_in_project():
