@@ -30,8 +30,6 @@ def init_dbs(sqls):
             else:
                 raise
 
-
-
 def exec_sql(sql):
     try:
         response = cursor.execute(sql)
