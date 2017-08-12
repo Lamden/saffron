@@ -72,11 +72,11 @@ def create_genesis_block(genesisBlockPayload):
 	'eip158Block'] \
 	for x in list(genesisBlockPayload['config'].keys()))
 
-	with open('genesis.json', 'w') as fp:
+	with open(os.path.join(settings.WORKING_DIR, 'genesis.json'), 'w') as fp:
 		json.dump(genesisBlockPayload, fp)
 
 def initialize_chain(project_dir, genesisBlockPath):
-	subprocess.Popen('geth --datadir ' + project_dir + ' init ' + genesisBlockPath, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	subprocess.Popen('geth --datadir ' + settings.WORKING_DIR + ' init ' + genesisBlockPath, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 def run_generator():
 	if not check_if_in_project():
