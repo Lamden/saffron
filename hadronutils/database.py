@@ -1,6 +1,6 @@
 import sqlite3
-
-
+import os
+from hadronutils.settings import DB_FILE
 create_accounts = 'CREATE TABLE accounts (name text primary key, address text)'
 
 create_contracts = '''
@@ -14,14 +14,15 @@ create_contracts = '''
                 method_identifiers blob,
                 instance blob
                 )'''
-
+#https://docs.python.org/3/library/configparser.html
 select_from = 'SELECT * FROM {table} WHERE {name} {address}'.format
-
-connection = sqlite3.connect('directory.db')
-cursor = connection.cursor()
+connection = None
+cursor = None
 
 # graceful initialization tries to create new tables as a test to see if this is a new DB or not
 def init_dbs(sqls):
+    connection = sqlite3.connect(os.path.join(DB_FILE))
+    cursor = connection.cursor()
     for s in sqls:
         try:
             cursor.execute(s)
@@ -29,8 +30,7 @@ def init_dbs(sqls):
             if 'already exists' in e.message:
                 pass
             else:
-                raise e
-init_dbs([create_contracts, create_accounts])
+                raise 
 
 def exec_sql(sql):
     try:
@@ -85,5 +85,3 @@ def insert_account(name, address):
 def insert_contract(contract=None):
     assert contract
     cursor.execute('INSERT INTO contracts VALUES (name "{}", address "{}")'.format(contract.name, contract.address, contract.deployed))
-
-

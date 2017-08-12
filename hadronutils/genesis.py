@@ -4,7 +4,7 @@ import sqlite3
 from web3 import Web3, KeepAliveRPCProvider
 import web3
 
-from hadronutils.utils import create_genesis_block, initialize_chain, create_account
+from hadronutils.utils import create_genesis_block, initialize_chain, create_account, GENESIS_BLOCK_TEMPLATE
 from hadronutils import database
 
 class MemoizedChain:
@@ -12,18 +12,23 @@ class MemoizedChain:
 		def __init__(self, project_dir='.', genesis_block_payload=None, genesis_block_path='genesis.json'):
 			self.project_dir = project_dir
 			self.genesis_block_path = genesis_block_path
+			database.init_dbs([database.create_contracts, database.create_accounts])
 			self.database = database
 			# initialize chain if it doesn't exist already
 			try:
 				open('{}/{}'.format(project_dir, genesis_block_path), 'r')
 			except:
-				assert genesis_block_payload, 'Not in a valid project directory or no genesis block payload has been provided.'
+				assert genesis_block_payload, 'No payload given'
+				# if genesis_block_payload == None:
+					# genesis_block_payload = GENESIS_BLOCK_TEMPLATE
 				create_genesis_block(genesis_block_payload)
 				initialize_chain(project_dir, genesis_block_path)
 				create_account('password')
 
 		def start(self):
 			self.process = subprocess.Popen('geth --datadir {} --etherbase 0'.format(self.project_dir), shell=True)
+			import pdb;pdb.set_trace()
+			self.process.pid
 			#self.web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
 			return self.process
 

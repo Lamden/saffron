@@ -4,6 +4,7 @@ hadronutils/accounts.py
 hadronutils/contracts.py
 hadronutils/database.py
 hadronutils/genesis.py
+hadronutils/settings.py
 hadronutils/utils.py
 hadronutils.egg-info/PKG-INFO
 hadronutils.egg-info/SOURCES.txt

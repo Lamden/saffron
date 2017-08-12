@@ -6,6 +6,7 @@ import os
 import time
 from threading import Thread
 import re
+from hadronutils import accounts
 
 GENESIS_BLOCK_TEMPLATE = {
 	'config': {
@@ -75,7 +76,7 @@ def create_genesis_block(genesisBlockPayload):
 		json.dump(genesisBlockPayload, fp)
 
 def initialize_chain(project_dir, genesisBlockPath):
-	subprocess.Popen('geth --datadir ' + project_dir + ' init ' + genesisBlockPath, shell=True)
+	subprocess.Popen('geth --datadir ' + project_dir + ' init ' + genesisBlockPath, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 def run_generator():
 	if not check_if_in_project():
@@ -138,18 +139,21 @@ def run_generator():
 
 		print('\n=== Initializing Chain... ===\n')
 		initialize_chain('.', 'genesis.json')
-		print('\nChain initialized!')
+		print('Chain initialized!')
 
 		user_input = input('Enter password for default account: ')
-		accounts.create_account(user_input)
+		create_account(user_input)
+		print('Blockchain generated!')
 	else:
 		print('Already in a project directory...')
+
+	#geth.attach(stdout=PIPE, stdin=PIPE)
 
 # this should be added to the account class in some capacity
 def create_account(password):
 	with open('pass.temp', 'w') as fp:
 		fp.write(password)
-	proc = subprocess.Popen('geth --datadir . --password pass.temp account new', stdout=subprocess.PIPE, shell=True)
+	proc = subprocess.Popen('geth --datadir . --password pass.temp account new', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 	account_string = proc.stdout.read().decode('utf-8')
 	# return the regex account
 	return account_string[[m.end() for m in re.finditer('{', account_string)][0]:[m.start() for m in re.finditer('}', account_string)][0]]

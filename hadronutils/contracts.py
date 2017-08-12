@@ -63,8 +63,6 @@ def insert_contract(name, abi, bytecode, gas_estimates, method_identifiers):
 def update_contract(address, instance, name):
 	Chain().database.cursor.execute(update_contracts_sql(address, instance, name))
 
-chain = Chain()
-
 def get_template_variables(fo):
 	nodes = Environment().parse(fo.read()).body[0].nodes
 	var_names = [x.name for x in nodes if type(x) is Name]

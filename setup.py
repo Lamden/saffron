@@ -13,7 +13,7 @@ setup(name='hadronutils',
       ],
       entry_points={
           "console_scripts": [
-              "hadron=hadronutils.main:gen_chain",
+              "hadron=hadronutils.utils:run_generator",
           ]
       },
       include_package_data=True,
