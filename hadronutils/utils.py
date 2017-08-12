@@ -156,7 +156,10 @@ def create_account(password):
 	proc = subprocess.Popen('geth --datadir {} --password pass.temp account new'.format(settings.WORKING_DIR), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 	account_string = proc.stdout.read().decode('utf-8')
 	# return the regex account
-	return account_string[[m.end() for m in re.finditer('{', account_string)][0]:[m.start() for m in re.finditer('}', account_string)][0]]
+	try:
+		return re.split(r"\{|\}", account_string)[1]
+	except Exception as e:
+		raise e
 	#os.remove('pass.temp')
 
 def close_if_timeout(process, timeout=3000):
