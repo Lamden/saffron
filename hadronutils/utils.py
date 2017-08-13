@@ -157,9 +157,12 @@ def create_account(password):
 	account_string = proc.stdout.read().decode('utf-8')
 	# return the regex account
 	try:
-		return re.split(r"\{|\}", account_string)[1]
+		return re.split(r"\{|\}", account_string)[0]
 	except Exception as e:
-		raise e
+		try:
+			return re.split(r"\{|\}", account_string)[1]
+		except Exception as e:
+			raise e
 	#os.remove('pass.temp')
 
 def close_if_timeout(process, timeout=3000):
