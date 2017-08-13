@@ -97,7 +97,7 @@ def test_contracts():
     new_contract = str(uuid.uuid1())
     with ntf() as t:
         c_name, rendered = contracts.render_contract(payload.copy())
-        t.write(rendered)
+        t.write(rendered.encode('utf8'))
         t.seek(0)
         c = Contract(new_contract, t.name)
         assert hasattr(c, 'abi')
