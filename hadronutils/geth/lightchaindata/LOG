@@ -1,6 +1,0 @@
-=============== Jul 31, 2017 (EDT) ===============
-20:39:18.720207 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
-20:39:18.720564 db@open opening
-20:39:18.721133 version@stat F·[] S·0B[] Sc·[]
-20:39:18.721395 db@janitor F·2 G·0
-20:39:18.721519 db@open done T·944.419µs

@@ -1,0 +1,4 @@
+sqlite:
+  adapter: sqlite3
+  database: "./test_project/directory.db"
+  timeout: 500

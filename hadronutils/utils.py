@@ -6,7 +6,7 @@ import os
 import time
 from threading import Thread
 import re
-from hadronutils import accounts
+from hadronutils import settings
 
 GENESIS_BLOCK_TEMPLATE = {
 	'config': {
@@ -72,11 +72,11 @@ def create_genesis_block(genesisBlockPayload):
 	'eip158Block'] \
 	for x in list(genesisBlockPayload['config'].keys()))
 
-	with open('genesis.json', 'w') as fp:
+	with open(os.path.join(settings.WORKING_DIR, 'genesis.json'), 'w') as fp:
 		json.dump(genesisBlockPayload, fp)
 
-def initialize_chain(project_dir, genesisBlockPath):
-	subprocess.Popen('geth --datadir ' + project_dir + ' init ' + genesisBlockPath, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+def initialize_chain(project_dir, genesisBlockFp):
+	subprocess.Popen('geth --datadir ' + settings.WORKING_DIR + ' init ' + os.path.join(settings.WORKING_DIR, genesisBlockFp), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 def run_generator():
 	if not check_if_in_project():
@@ -151,12 +151,15 @@ def run_generator():
 
 # this should be added to the account class in some capacity
 def create_account(password):
-	with open('pass.temp', 'w') as fp:
+	with open(os.path.join(settings.WORKING_DIR, 'pass.temp'), 'w') as fp:
 		fp.write(password)
-	proc = subprocess.Popen('geth --datadir . --password pass.temp account new', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+	proc = subprocess.Popen('geth --datadir {} --password pass.temp account new'.format(settings.WORKING_DIR), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 	account_string = proc.stdout.read().decode('utf-8')
 	# return the regex account
-	return account_string[[m.end() for m in re.finditer('{', account_string)][0]:[m.start() for m in re.finditer('}', account_string)][0]]
+	try:
+		return re.split(r"\{|\}", account_string)[1]
+	except Exception as e:
+		raise e
 	#os.remove('pass.temp')
 
 def close_if_timeout(process, timeout=3000):
