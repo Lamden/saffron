@@ -10,7 +10,7 @@ setup(name='hadronutils',
           'jinja2',
           'py-solc',
           'pytest',
-          'solc'
+          'py-solc'
       ],
       entry_points={
           "console_scripts": [
