@@ -9,7 +9,8 @@ setup(name='hadronutils',
           'web3',
           'jinja2',
           'py-solc',
-          'pytest'
+          'pytest',
+          'py-solc'
       ],
       entry_points={
           "console_scripts": [

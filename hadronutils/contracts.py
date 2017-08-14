@@ -5,7 +5,7 @@ import pprint
 import random
 import argparse
 import subprocess
-from io import StringIO
+from io import BytesIO
 
 import web3
 from web3.eth import Eth
@@ -70,7 +70,7 @@ def get_template_variables(fo):
 
 def render_contract(payload, contract_directory=DEFAULT_CONTRACT_DIRECTORY):
 	sol_contract = payload.pop('sol')
-	template_variables = get_template_variables(StringIO(sol_contract))
+	template_variables = get_template_variables(BytesIO(sol_contract.encode()))
 	assert 'contract_name' in payload
 	name = payload.get('contract_name')
 	assert all(x in template_variables for x in list(payload.keys()))
