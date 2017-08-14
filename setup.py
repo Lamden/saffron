@@ -15,7 +15,7 @@ setup(name='hadronutils',
       ],
       entry_points={
           "console_scripts": [
-              "hadron=hadronutils.utils:init",
+              "hadron=hadronutils.cli:cli",
           ]
       },
       include_package_data=True,
