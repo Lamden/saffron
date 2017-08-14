@@ -10,17 +10,18 @@ setup(name='hadronutils',
           'jinja2',
           'py-solc',
           'pytest',
-          'py-solc'
+          'py-solc',
+          'click'
       ],
       entry_points={
           "console_scripts": [
-              "hadron=hadronutils.utils:run_generator",
+              "hadron=hadronutils.utils:init",
           ]
       },
       include_package_data=True,
       packages=find_packages(),
       package_data={
-          'hadron': [
+          'hadronutils.': [
               'default.conf',
           ],
           # 'hadron.node': [

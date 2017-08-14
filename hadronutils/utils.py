@@ -8,6 +8,8 @@ from threading import Thread
 import re
 from hadronutils import settings
 
+import click
+
 GENESIS_BLOCK_TEMPLATE = {
 	'config': {
 	    'chainId': 0,
@@ -72,11 +74,11 @@ def create_genesis_block(genesisBlockPayload):
 	'eip158Block'] \
 	for x in list(genesisBlockPayload['config'].keys()))
 
-	with open(os.path.join(settings.WORKING_DIR, 'genesis.json'), 'w') as fp:
+	with open(os.path.join(settings.hadron_home, 'genesis.json'), 'w') as fp:
 		json.dump(genesisBlockPayload, fp)
 
 def initialize_chain(project_dir, genesisBlockFp):
-	subprocess.Popen('geth --datadir ' + settings.WORKING_DIR + ' init ' + os.path.join(settings.WORKING_DIR, genesisBlockFp), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	subprocess.Popen('geth --datadir ' + settings.hadron_home + ' init ' + os.path.join(settings.hadron_home, genesisBlockFp), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 def run_generator():
 	if not check_if_in_project():
@@ -151,9 +153,9 @@ def run_generator():
 
 # this should be added to the account class in some capacity
 def create_account(password):
-	with open(os.path.join(settings.WORKING_DIR, 'pass.temp'), 'w') as fp:
+	with open(os.path.join(settings.hadron_folder_path, 'pass.temp'), 'w') as fp:
 		fp.write(password)
-	proc = subprocess.Popen('geth --datadir {} --password pass.temp account new'.format(settings.WORKING_DIR), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+	proc = subprocess.Popen('geth --datadir {} --password pass.temp account new'.format(settings.hadron_folder_path), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 	account_string = proc.stdout.read().decode('utf-8')
 	# return the regex account
 	try:
@@ -176,3 +178,14 @@ def close_if_timeout(process, timeout=3000):
 			time = 0
 		# sleep one millisecond
 		time.sleep(0.0001)
+
+
+@click.command()
+@click.option('--thing1', default=1, help='Number of greetings.')
+@click.option('--thing2', prompt='Your name',
+              help='The person to greet.')
+def init(thing1, thing2):
+    """Simple program that greets NAME for a total of COUNT times."""
+    for x in range(thing1):
+        click.echo('Hello %s!' % thing2)
+

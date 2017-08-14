@@ -6,12 +6,12 @@ import web3
 
 from hadronutils.utils import create_genesis_block, initialize_chain, create_account, GENESIS_BLOCK_TEMPLATE
 from hadronutils import database
-from hadronutils.settings import WORKING_DIR
+from hadronutils.settings import hadron_home
 
 class MemoizedChain:
 	class __Chain:
 		def __init__(self, project_dir='', genesis_block_payload=None, genesis_block_path='genesis.json'):
-			self.project_dir = WORKING_DIR
+			self.project_dir = hadron_home
 			self.genesis_block_path = genesis_block_path
 			database.init_dbs([database.create_contracts, database.create_accounts])
 			self.database = database
