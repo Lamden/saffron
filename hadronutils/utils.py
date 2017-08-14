@@ -132,6 +132,7 @@ def run_generator():
 				break
 			print('\n... Throwing away old data and starting fresh ...\n')
 		
+		# modify if using the --home_dir option or the current working directory (current working directory is the default and james can suck my nut about it)
 		run_location, filename = os.path.split(os.path.abspath(__file__))
 		config = configparser.ConfigParser()
 		config.read(os.path.join(run_location, 'config/default.conf'))
