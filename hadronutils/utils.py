@@ -7,8 +7,9 @@ import time
 from threading import Thread
 import re
 from hadronutils import settings
-
-import click
+import getpass
+import configparser
+from os.path import join
 
 GENESIS_BLOCK_TEMPLATE = {
 	'config': {
@@ -74,11 +75,11 @@ def create_genesis_block(genesisBlockPayload):
 	'eip158Block'] \
 	for x in list(genesisBlockPayload['config'].keys()))
 
-	with open(os.path.join(settings.hadron_home, 'genesis.json'), 'w') as fp:
+	with open(os.path.join(settings.hadron_folder_path, 'genesis.json'), 'w') as fp:
 		json.dump(genesisBlockPayload, fp)
 
 def initialize_chain(project_dir, genesisBlockFp):
-	subprocess.Popen('geth --datadir ' + settings.hadron_home + ' init ' + os.path.join(settings.hadron_home, genesisBlockFp), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	subprocess.Popen('geth --datadir ' + settings.hadron_folder_path + ' init ' + os.path.join(settings.hadron_folder_path, genesisBlockFp), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 def run_generator():
 	if not check_if_in_project():
@@ -130,17 +131,28 @@ def run_generator():
 			if user_input is 'y':
 				break
 			print('\n... Throwing away old data and starting fresh ...\n')
-
-		os.makedirs(project_dir, exist_ok=True)
-		PROJECT_DIR = project_dir
-		os.chdir(project_dir)
+		
+		run_location, filename = os.path.split(os.path.abspath(__file__))
+		config = configparser.ConfigParser()
+		config.read(os.path.join(run_location, 'config/default.conf'))
+		settings.hadron_home = os.environ.get('HADRON_HOME', None) if os.environ.get('HADRON_HOME', None) else os.getcwd()
+		settings.hadron_folder_path = os.environ.get('HADRON_FOLDER_PATH', None) if os.environ.get('HADRON_FOLDER_PATH', None) else project_dir
+		settings.hadron_db_file = os.environ.get('HADRON_DB_FILE', None) if os.environ.get('HADRON_DB_FILE', None) else join(settings.hadron_folder_path, config.defaults()['hadron_db_file'])
+		
+		try:
+		    os.makedirs(settings.hadron_folder_path)
+		except OSError as e:
+		    pass
+		#os.makedirs(project_dir, exist_ok=True)
+		#PROJECT_DIR = project_dir
+		#os.chdir(project_dir)
 		print('Directory created in: {}'.format(os.getcwd()))
 
 		create_genesis_block(genesis)
 		print('Genesis block written!')
 
 		print('\n=== Initializing Chain... ===\n')
-		initialize_chain('.', 'genesis.json')
+		initialize_chain(settings.hadron_folder_path, 'genesis.json')
 		print('Chain initialized!')
 
 		user_input = input('Enter password for default account: ')
@@ -178,14 +190,3 @@ def close_if_timeout(process, timeout=3000):
 			time = 0
 		# sleep one millisecond
 		time.sleep(0.0001)
-
-
-@click.command()
-@click.option('--thing1', default=1, help='Number of greetings.')
-@click.option('--thing2', prompt='Your name',
-              help='The person to greet.')
-def init(thing1, thing2):
-    """Simple program that greets NAME for a total of COUNT times."""
-    for x in range(thing1):
-        click.echo('Hello %s!' % thing2)
-
