@@ -1,6 +1,7 @@
 setup.py
 hadronutils/__init__.py
 hadronutils/accounts.py
+hadronutils/cli.py
 hadronutils/contracts.py
 hadronutils/database.py
 hadronutils/genesis.py
