@@ -29,9 +29,9 @@ class MemoizedChain:
 				create_account('password')
 
 		def start(self):
-			self.process = subprocess.Popen('geth --datadir {} --etherbase 0'.format(self.project_dir), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-			import pdb;pdb.set_trace()
-			self.process.pid
+			self.process = subprocess.Popen(['nohup', 'geth --datadir {} --etherbase 0'.format(self.project_dir), '&'], shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+			#import pdb;pdb.set_trace()
+			print(self.process.pid)
 			#self.web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
 			return self.process
 
