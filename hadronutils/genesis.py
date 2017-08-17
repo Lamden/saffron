@@ -32,7 +32,6 @@ class MemoizedChain:
 			import subprocess
 			GETH = subprocess.check_output(['which','geth'])
 			pid = os.spawnl(os.P_NOWAITO, GETH.strip(), 'geth','--datadir',self.project_dir, '--etherbase','0', '&')
-			os.spawnlp(os.P_WAIT, 'cp', 'cp', 'index.html', '/dev/null')
 			print(pid)
 			# self.process = subprocess.Popen([], shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
 			#import pdb;pdb.set_trace()
