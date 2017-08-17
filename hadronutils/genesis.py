@@ -8,6 +8,8 @@ from hadronutils.utils import create_genesis_block, initialize_chain, create_acc
 from hadronutils import database
 from hadronutils.settings import hadron_home
 
+import subprocess
+
 class MemoizedChain:
 	class __Chain:
 		def __init__(self, project_dir='', genesis_block_payload=None, genesis_block_path='genesis.json'):
@@ -27,7 +29,7 @@ class MemoizedChain:
 				create_account('password')
 
 		def start(self):
-			self.process = subprocess.Popen('geth --datadir {} --etherbase 0'.format(self.project_dir), shell=True)
+			self.process = subprocess.Popen('geth --datadir {} --etherbase 0'.format(self.project_dir), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
 			import pdb;pdb.set_trace()
 			self.process.pid
 			#self.web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))

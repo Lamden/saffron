@@ -137,9 +137,13 @@ def run_generator():
 		config = configparser.ConfigParser()
 		config.read(os.path.join(run_location, 'config/default.conf'))
 		settings.hadron_home = os.environ.get('HADRON_HOME', None) if os.environ.get('HADRON_HOME', None) else os.getcwd()
-		settings.hadron_folder_path = os.environ.get('HADRON_FOLDER_PATH', None) if os.environ.get('HADRON_FOLDER_PATH', None) else project_dir
+		settings.hadron_folder_path = os.environ.get('HADRON_FOLDER_PATH', None) if os.environ.get('HADRON_FOLDER_PATH', None) else join(settings.hadron_home, project_dir)
 		settings.hadron_db_file = os.environ.get('HADRON_DB_FILE', None) if os.environ.get('HADRON_DB_FILE', None) else join(settings.hadron_folder_path, config.defaults()['hadron_db_file'])
 		
+		print(settings.hadron_home)
+		print(settings.hadron_folder_path)
+		print(settings.hadron_db_file)
+
 		try:
 		    os.makedirs(settings.hadron_folder_path)
 		except OSError as e:
@@ -166,9 +170,10 @@ def run_generator():
 
 # this should be added to the account class in some capacity
 def create_account(password):
+	print(settings.hadron_folder_path)
 	with open(os.path.join(settings.hadron_folder_path, 'pass.temp'), 'w') as fp:
 		fp.write(password)
-	proc = subprocess.Popen('geth --datadir {} --password pass.temp account new'.format(settings.hadron_folder_path), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+	proc = subprocess.Popen('geth --datadir {} --password {} account new'.format(settings.hadron_folder_path, os.path.join(settings.hadron_folder_path, 'pass.temp')), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	account_string = proc.stdout.read().decode('utf-8')
 	# return the regex account
 	try:

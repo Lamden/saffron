@@ -1,0 +1,303 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\title{The Hadron Cryptographic Ledger Project: a framework for the rapid development and deployment of blockchain technologies.}
+\author{Stuart Farmer }
+\date{stu@hadronledger.com}
+
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{verbatim}
+\usepackage{seqsplit}
+\usepackage[table,xcdraw]{xcolor}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+The greatest achievements in society do not come from the technology itself, but from making said technology accessible to the masses. Henry Ford made the car cheap. Steve Jobs and Bill Gates made the personal computer available in the home. Using the same techniques as these great innovators, we have developed a system of tools that allows the construction and deployment of blockchains for individual applications in as little effort as possible. Through a generator tool, a packing repository, general development community, and chain-to-chain communication router, we have mimicked what other developers have already done to make their favorite technologies more accessible to their own communities. Thus, the Hadron Ledger is a continuation on great practices to make great technologies even better through accessibility which leads to innovation.
+
+\section{Motivation}
+
+In the past several years, we have seen an influx of blockchain technologies hitting the market. These technologies are touted as a means to an end of the centralized banking and financial systems. However, these blockchains rely on flawed systems that do not take into account the application of said technologies into the current infrastructure space. As a result, blockchain technology is segregated from the mainstream financial systems, and thus is ironically hindered by achieving its end goal.
+
+The Hadron project is an effort to create software development tools that increase the mass adoption of blockchain technology so that this revolutionary infrastructure can penetrate the mass market and cause real disruption and innovation.
+
+Laid out in this whitepaper is our critiques of the current status quo, and how we plan on improving the space.
+
+\section{Goals of the Project}
+
+The Hadron Project aims to create a platform that lowers the barrier of entry for innovators and developers to start inventing with state-of-the-art blockchain software and does so in a way that most developers are already familiar with to provide cognitive offloading of the lower level blockchain operations that prevent many from diving into the field.
+
+Transaction costs on the chain are free, and the end result is a network of private blockchains dedicated to each application that communicate with one another over a distributed crypto routing system known as the Hadron Ledger that utilizes a Proof of Work algorithm directly linked the the amount of transactions a miner has helped confirmed to reward representative assets that can be used to purchase transaction power on the entire chain.
+
+There are three parts of the project: the Hadron Wrapper, a rapid blockchain generator tool, the Hadron Hub, a public repository for package management and application discovery to increase development speed, and the Hadron Ledger, which provides the framework of chain-to-chain payment channels to exchange any asset type between blockchain applications. Services are hosted via an IPFS cluster, and work is distributed between peers on a decentralized computing network retaining the distributed and trustless nature of cryptocurrency projects.
+
+These technologies are laid out later on in the paper following the motivations and rationale behind the project.
+
+\section{Problems with Current Blockchain Implementations}
+
+There are many fundamental flaws with the blockchain architecture that prevent it from becoming a mainstream technology. These flaws exist on both the user’s side as well as the developer / service provider’s side. Laid out are the areas in which we improve upon the current blockchain implementations with this project.
+
+\begin{center}
+\textbf{Transaction Fees}
+\end{center}
+
+Firstly, let’s take a look at the problem with transaction fees from an end user standpoint. The key to success in the crypto space is mass adoption of Bitcoin et all in the international market. As it stands at this time of writing, the average transaction fee for a Bitcoin transaction is at around 6\%. Compared to centralized systems such as PayPal, Mastercard, and Visa, Bitcoin is actually about twice as expensive. See the chart below.
+
+It should be noted that the fundamentals of cryptocurrency is a reason as to why users feel justified with this discrepancy. The decentralized nature of ownership outweighs the additional costs. However, on a macroeconomic scale, cost efficiency will outweigh fundamental allure.
+
+\begin{center}
+“But what about Ethereum? Their transaction fees are only 0.3\%!”
+\end{center}
+	
+While this is true, the Ethereum blockchain was not designed as a transfer of value network like Bitcoin was, but rather a smart contracts network to enable trustless and decentralized software systems. We have to remember that users instead pay for the number of operations that occur on the chain and that this number of operations continues to increase as more and more complicated smart contracts are deployed. A major selling point of Ethereum was the ability to add smart contracts as ‘libraries’ in a similar way as abstraction in software development works. Thus, we can safely assume that over time, as more complex smart contracts are made, the cost of interacting with the main Ethereum blockchain increases over time. This mechanism by charging developers on the operations distinctiveness innovation and complex smart contract systems that Ethereum needs to be a long term success.
+
+\begin{center}
+\textbf{Bloated Chains}
+\end{center}
+
+Carrying on with the Ethereum model, because the ledger is public, anyone can deploy whatever smart contracts they’d like. As a result, even though the blockchain is only two years old, the size of a full node is 242GB, which is even larger than the current size of a Bitcoin full node which is around 160GB. Having to install a full node, or at least a light chain which is still around 20Gb (cite) of data, is a hefty barrier of entry for someone who just wants to dabble in smart contract development.
+
+Compare the time it takes to fully sync a node with the time it takes to install Python, Node.js, or any other programming environment to start poking around. The inconvenience alone is unattractive to anyone halfway curious about blockchain technology.
+
+\begin{center}
+\textbf{Transactions per Second (Scalability)}
+\end{center}
+
+Modern blockchains have a notoriously slow throughput rate which causes transaction times to be slow, and a backlog of pending transactions to pile up. This is an unacceptable replacement for the current financial systems that hardcore evangelists aim to accomplish. In comparison, PayPal released a case study in May of 2015 where they were able to create a system throughput rate of over a billion transactions a day. That translates to about 11,600 transactions per second. Compare this to Bitcoin, which has a throughput rate of only 3 transactions per second. Likewise, Ethereum boasts a mere 15 transactions per second (citation needed)
+
+This distinctiveness enterprises that deal with assets in a traditional high throughput database structure to sacrifice capacity for the benefits of high record maintenance.
+
+\begin{center}
+\textbf{Mining and Resource Efficiency}
+\end{center}
+
+Another barrier of adoption is the arbitrary hashing functions that mining rigs perform to ‘prove work.’ These machines take up massive amounts of resources in energy costs that make no sense to the standard enterprise user. Whereas this is an approach to distributing tokens and coins on a main chain, it does not translate to the business setting where capital resources are optimized. Inefficient processing makes no sense to the modern business, and thus these types of pointless hashing functions are impeding widespread adoption.
+
+\begin{center}
+\textbf{Integration and Adoption}
+\end{center}
+Blockchain software is very new and the human capital resources are scarce. It requires a very highly technical and specialized individual to consult and develop for blockchain applications. Compared to other database types in a corporate setting, setting up a blockchain is time consuming and expensive. Whereas most modern database systems follow a similar development and deployment paradigm, blockchains are so fundamentally different that there is currently not a solution in place to transforming the development process into something that resembles other database systems on the market.
+
+Furthermore, development environments, package managers, testing suites, continuous integration environment, etc. which exist for nearly every other tech stack in existence do not exist for blockchain software. This prevents organizations from integrating this technology into their current workflow.
+
+\begin{center}
+\textbf{Migration, Upgrades, and Future Proofing}
+\end{center}
+
+For many interested in blockchain technologies for their enterprises or businesses, the lack of ability to migrate data to a new chain, or to upgrade at a time that is best for a business is a pitfall. Those interested in mainchain and public ledger systems are reliant on foundations to release new code or the decentralised community where there is little authority or certainty to the outcome. Furthermore, trying out different systems to see what works best for an organization is cumbersome.
+
+\section{The Solution}
+
+The Hadron project proposes the creation of a suite of development tools that allows rapid development and deployment of private blockchain systems that mimics the modern development process featured in such tech stacks as Node.js or Python which provide a plethora of easy to use tools, extensive and robust documentation, and vast popular supporting communities.
+
+The project is broken up into three sections, the Hadron Wrapper, the Hadron Hub, and the Hadron Ledger, which each add a layer to end goal of providing hyperfast blockchains for developer to test, experiment, and deploy across a network of other blockchain systems. The Hadron Wrapper is the generator tool to deploy private chains on an internal network without any hassle. The Hadron Hub is a central repository for smart contract packages and templates, private chain naming services, and blockchain discover. The Hadron Ledger is the network that handles atomic swap processes between chains and facilitates communication between blockchain apps on the network.
+
+\begin{center}
+\textbf{The Hadron Wrapper}
+\end{center}
+
+The concept is that instead of having a single mainnet to break up blockchains into individual use cases. For example, an organization would have their own blockchain for their own web app. This allows them to have complete control over the technology that they use as well as dedicating their own computing resources to running that blockchain, rather than wasting effort on a main chain. Furthermore, ‘gas’ in the case of an Ethereum chain can be eliminated and the difficulty of a network can be turned down to a more reasonable level, thus enabling free transactions across their application. This makes a blockchain act more like a web server than a traditional chain and can then be used to replace and upgrade existing database structures internally.
+
+\begin{center}
+\textbf{Generator Tool}
+\end{center}
+
+The Hadron Wrapper is taking design queues from other package management CLI tools such as pip, yeoman, and npm to generate private blockchains as their own development projects. Generation through the CLI took is as simple as ‘hadron init.’ Through this CLI application, you will be able to interact with the chain in a simplified API that abstracts most of the complexities of blockchain technologies from you.
+
+The initial blockchain technology that we are implementing is Ethereum, and so developers will be able to initialize these chains, create accounts, mine blocks, and deploy contracts in a sub-processed instance of geth, Ethereum’s client written in Go.
+
+By abstracting the main interaction components away from geth into a CLI tool, we are able to then provide a RESTful API service for interacting with these private chains. A RESTful API allows for blockchains to be interacted with across the Internet in literally any programming language interface. If a programming language supports HTTP requests, they will be able to interact with Hadron generated private chains. This allows integration into any tech stack, and allows us to create drop in libraries for many modern language frameworks such as Swift for iOS development, Java for Android development, and even embedded C for Internet of Things applications.
+
+Furthermore, the Hadron Wrapper will provide a local server with an Ethereum blockchain explorer that can be public facing so that the wider community can monitor and see the activity occurring on the chain.
+
+A web service to manage the chain from a graphical web interface similar to Parse will also be included out of the box.
+
+\begin{center}
+\textbf{Deployment}
+\end{center}
+
+After the development of a private chain, an organization will want to package and deploy that in a way that can integrate into their internal technical stacks. To do this, the Hadron Wrapper will export Dockerfiles for quick deployment. On-demand deployment and management through Kubernetes instances will be available as a service through the Hadron Project itself for turn key solutions.
+
+\begin{center}
+\textbf{Architecture}
+\end{center}
+
+Beyond creating a private chain instance, the Hadron Wrapper contains the necessary methods needed to accept atomic swap transactions and interact with the larger Hadron chain. Thus, the Hadron Wrapper should be thought of as a type of interface. Each Hadron Wrapper instance must adequately conform to a set of monitoring and interaction protocols to guarantee that the chain is trustless and that transactions can be independently confirmed.
+
+If the Hadron Wrapper component can achieve these functionalities, then the internal blockchain driver does not have to be based off of Ethereum. Into the future, the Hadron Wrapper will support arbitrary blockchain technologies such as Bitcoin, Litecoin, Zcash, Monero, Neo, Tezos, Eos, and more as long as they can support payment channels in a trustless fashion. Even novel blockchain technologies that adhere to the wrapper protocol will be supported, creating a completely custom blockchain-to-blockchain interfacing network.
+
+\begin{center}
+\textbf{The Hadron Hub}
+\end{center}
+
+Apart from simple blockchain generation, the main driver of technology adoption is not the base use cases of the core tech, but rather the surrounding communities and feature-sets built by them. You can see this with the Ethereum community, and more with newer smart contract systems that are starting to spur innovation. Their cryptocurrency mechanisms are not what sets them apart from Bitcoin or Litecoin. Instead it is the development community surrounding and developing smart contract applications that affords wider adoption.
+
+Similarly, centralized package repositories that allow users to pull in packages from the wider community, comment on them, and even develop for them solidifies a base of intellectual capital that leads to the success of the project and greater innovation in the field.
+
+The purpose of the Hadron Hub is to host a centralized package repository, namespace system, and discovery tool so that developers of Hadron chains can connect with other developers, play off each other's innovations, and lead to a greater state of cryptocurrency.
+
+\begin{center}
+\textbf{Public Package Manager}
+\end{center}
+
+Like other development suites, Hadron has the ability to create smart contract packages. Using the Jinja templating system, we are able to abstract common Solidity contract types such as ERC20 tokens, Ethereum Name Services, and the Etherdelta decentralized exchange, package them up into contracts that only take a set of arguments, and allow deployment across private chains in as simple as a manner of running ‘hpm install ens’ from a CLI console, or sending an API request to do the same through the administrative dashboard included in the Hadron Wrapper. This takes the headaches out of redeploying commonly used smart contracts, and allows the packaging of highly complex smart applications for quick distribution.
+
+\begin{verbatim}
+pragma solidity ^{{solidity_version}};
+
+contract {{contract_name}} {
+    string public constant symbol = "{{symbol}}";
+    string public constant name = "{{asset_name}}";
+    uint8 public constant decimals = 18;
+    uint256 _totalSupply = {{total_supply}};
+
+    address public owner;
+    mapping(address => uint256) balances;
+    mapping(address => mapping (address => uint256)) allowed;
+...
+
+{
+    ‘solidity_version’:’0.4.15’,
+    ‘contract_name’:’Testcoin’,
+    ‘symbol’:’TST’,
+    ‘asset_name’:’Testcoin’,
+    ‘total_supply’:’1000000’
+}
+\end{verbatim} 
+
+\begin{center}
+Example of a Solidity Template for ERC20 tokens with corresponding JSON input. Installation of such contract could be accomplished via ‘hpm install erc20 --args,’ or from the Hadron Wrapper administration panel.
+\end{center}
+
+\begin{center}
+\textbf{Name Directory Service}
+\end{center}
+
+Not all users of Hadron will be developers. Many users are simply interested in the applications that people are using cryptocurrency systems to develop. This being the case, it’s important to provide a discovery service for Hadron users. Likewise, to allow atomic swaps between chains in a simplistic manner, there should be an easy way to connect with other chains that mimics a DNS.
+
+On the Hadron Hub, users will be able to search and discover new blockchain applications. These are private chains developed with the Hadron Wrapper that have connected to the Hadron Ledger. Each of these chains will be able to register for a name and fill out a profile about their service which can include links to marketing sites, enode information for miners, and anything else that would lead users to more valuable information about their service. That name will be used to locate and send information to through the Hadron Ledger in the event of atomic swapping of currencies, interaction with the chain, and the general use of the native Hadron token.
+
+\begin{center}
+\textbf{The Hadron Ledger}
+\end{center}
+
+The main technological feat of the Hadron project is its cryptographic ledger and routing system that connects private chains together. By instead of recreating an entirely new chain and instead shifting focus towards distributed private chains only tied together by a routing infrastructure, we can avoid blockchain bloat, the need to ‘sync’ with the network before interacting with it, increasing transaction costs, and guarantee a future-proof platform that will last years regardless of the further improvements upon general blockchain technology.
+
+\begin{center}
+\textbf{Routing}
+\end{center}
+
+The Hadron Ledger is primarily the infrastructure that links private chains together over a centralized repository, much like a telephone network. The ledger takes care of interaction between all chains and provides a common set of interface options to that chains can be treated the same ways in computer programming environments and platforms for further integration away from the Hadron Hub.
+
+A main value add of the Hadron Ledger is the absence of transaction fees. In exchange for the benefits of connection to the Hadron Hub and exposing a private chain to the wider community which increases public adoption, a private chain dedicates a certain amount of computing power to the ledger overall. Because the ledger is absent of difficult hashing functions, and serves merely as an intermediary to process packets of information between chains. The computing load to connect and serve information is comparable to a modern day web server rather than a standard blockchain miner. Blockchain application providers expose a single public entry point onto the IPFS and distributed computing cluster.
+
+\begin{center}
+\textbf{Payment Channels for Cross-Chain Transactions}
+\end{center}
+
+While retaining a trustless and decentralized system, it is required for a system of cross-chain payments to exist so that blockchain applications can interact with each other freely. This is the main draw of the Hadron Ledger. To do so, the Ledger implements Lightning Network inspired payment channels to provide a secure and decentralized method of exchanging funds across blockchains. Transactions initiate from private chains, and utilize the Ledger as a public service for managing secure and guaranteed remittance of funds from chain to chain.
+
+The Ledger is a public service that distributes the work of smart contract deployment and identity verification for chain to chain transfers between participants connected to the main network. Private chains are free to implement their own methods by which to transfer funds to each other, but the public Ledger is verifiable by consensus of participants on the wider network, thus providing a stronger sense of trust to cross chain transactions.
+
+<explain payment channels for dumb dumbs>
+
+Payment channels are represented in pure Solidity smart contract code that run on each private blockchain. When a user wants to initiate a swap, they send a request both the Hadron Ledger service and the chain they want to swap with outlining the terms of their expected transfer. The request is comprised of the sender and receiver address on both chains, as well as the value of the asset being swapped. For example, a payload would look like this:
+
+\begin{verbatim}
+{
+    Private-chain-1 : {
+        Sender-address : 0x000,
+        Receiver-address: 0x000,
+        Amount: 100,
+        Token-contract-address (optional): 0x000
+    }
+    Private-chain-2 : {
+        Sender-address : 0x000,
+        Amount: 1000,
+        Token-contract-address (optional): 0x000
+    }
+}
+\end{verbatim}
+
+When the computing cluster receives this payload, the cluster will compile the Solidity contract code into bytecode that must be deployed onto each chain within the next block. The opposing chains’ bytecodes are sent to each other and signed with a public identifier key so that they can independently verify that the correct contract code was indeed deployed in the next block on the chain.
+
+\begin{figure}[htbp!]
+\centering
+\includegraphics[scale=0.5]{fig1.jpg}
+\caption{Chain A initiates a swap by sending a message to the Ledger. The Ledger then takes the swap requirements and compiles them into Solidity bytecode to be deployed on each chain.}
+\end{figure}
+
+\begin{figure}[htbp!]
+\centering
+\includegraphics[scale=0.5]{fig2.jpg}
+\caption{The bytecode is signed with each chain's public key and sent to both parties. Chain A deploys their contract. Chain B keeps a copy to verify later.}
+\end{figure}
+
+\begin{figure}[htbp!]
+\centering
+\includegraphics[scale=0.5]{fig3.jpg}
+\caption{The same occurs for Chain B.}
+\end{figure}
+
+\begin{figure}[htbp!]
+\centering
+\includegraphics[scale=0.5]{fig4.jpg}
+\caption{Assuming that this is an agreeable swap, both chains deploy the contract, and check to see if the other party has done the same by searching for the bytecode on the latest block. If this has not occurred, the chain does not have to follow through with any obligations, and the transaction reverts without loss of funds.}
+\end{figure}
+
+If the originator chain fails to deploy their contract while the recipient chain follows through, the contract on the recipient chain will self-destruct and remit funds back to their account. On the flip side, if the originator sets up a contract, but the recipient does not agree to the terms, the originators contract will be destroyed they will receive their locked up funds. 
+	
+Assuming that both parties are interested pursuing the swap, they must then follow through with the agreed upon obligations on each others’ chains, which executes the payment channel regularly.
+
+To make sure that the payments have been sent through in a timely fashion, each chain can ‘ping’ their contracts which invokes a time lock method. If the contract is too many blocks behind the agreed upon time lock, it is assumed that the other party is not going to finalize the payment channel, and the contract is destroyed. This incentives the opposing party to follow through with their obligations because they risk losing their funds. It also incentives the originator to ping their contract as soon as possible, because in the situation where the originator has received funds on the opposing chain but not on their chain, they can remit their funds back to themselves and in effect have gained ‘free’ assets on the opposing chain because the time lock had expired on their own to claim the assets.
+
+\begin{figure}[htbp!]
+\centering
+\includegraphics[scale=0.5]{fig5.jpg}
+\caption{Chain A's best economic option is to submit the funds and resolve their own contract as soon as possible, because if Chain B acts before them, Chain A will lose funds. Inversely, Chain A could also profit if Chain B decided not to redeem their funds. So it is also in Chain A's best interest to resolve their contract as soon as possible}
+\end{figure}
+
+\begin{figure}[htbp!]
+\centering
+\includegraphics[scale=0.5]{fig6.jpg}
+\caption{The best case scenario for both parties, therefore, is to resolve the payment channel on the opposing chain, and resolve the contract on their own chain as soon as possible. By adding economic incentive to do this, the network benefits from quick chain-to-chain transfers.}
+\end{figure}
+
+
+\begin{center}
+\textbf{Maintaining Distributed and Trustless System Architecture}
+\end{center}
+
+While private chains on Hadron are built off of Ethereum which is a distributed and trustless protocol, the rest of the Hadron systems could be developed using standard centralized server-client architecture. However, while this is potentially an easier method of execution, standard HTTP protocol is vulnerable to DDOS attacks, server failure, and centralized ownership of data that sacrifices the rights of the collaborators of the project.
+
+Thus, the project will be deployed upon the IPFS protocol to establish a true peer to peer system that is distributed and trustless.
+
+\begin{center}
+\textbf{Bosons, an agnostic digital currency}
+\end{center}
+
+While atomic swaps across private chains will help facilitate app-to-app communication, there should also be away for users who are involved in the Hadron project apart from a chain hoster or developer to easily participate and use the blockchain applications on the Hadron Hub. Thus, we propose an agnostic unit of currency known as a ‘Boson.’ Bosons are a digital currency that serve the universal asset of the platform itself, available for trade by users of the system who want to use a currency that use all private chains. Communication with the Boson chain comes out of the box for Hadron developers, so they do not have to form independent relationships with other private chains to start transferring assets to one another. In this fashion, developers can start to integrate a digital currency market and trade into their blockchain applications immediately. By offering a native digital currency out of the box to all Hadron users, Bosons increase the adoption rate of private chains, as more individuals are able to participate with the application coming from the Hadron community.
+
+\begin{center}
+\textbf{Token Sale (Token Scattering Event)}
+\end{center}
+
+The Hadron project will be funded by a Token Distribution Event (Token Scattering) of the Bosons. These Bosons will be available for purchase on the Ethereum main chain in the form of an ERC20 token. Said Bosons will then be available for swapping onto the Hadron chain during a ceremonious process which signifies the milestone achievement of chain-to-chain communication on the Hadron Ledger.
+
+Further detailing on the Token Scattering Event is included in organizational documents.
+
+\section{Conclusion}
+
+The goal of the Hadron project is to provide a suite of tools that makes the rapid development and deployment of blockchains easy for the general population of developers. By modelling our tools based on the most popular tools used by developers today, we can capture a large and enthusiastic base of developers who want to get involved in blockchain but are unable to get over the initial hurdles.
+
+Furthermore, by providing a centralized community, innovation can prosper and build upon itself, leading to newer and greater technologies and accelerating the industry as a whole.
+
+Lastly, through the Hadron Ledger, we are able to connect all of these projects together on a single routing system that facilitates swap transactions so that private chains can retain the benefits of self-management and still take advantage of a larger ecosystem of great applications.
+
+\bibliographystyle{plain}
+\bibliography{references}
+\end{document}
