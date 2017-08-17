@@ -32,12 +32,7 @@ class MemoizedChain:
 			import subprocess
 			GETH = subprocess.check_output(['which','geth'])
 			pid = os.spawnl(os.P_NOWAITO, GETH.strip(), 'geth','--datadir',self.project_dir, '--etherbase','0', '&')
-			print(pid)
-			# self.process = subprocess.Popen([], shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-			#import pdb;pdb.set_trace()
-			# print(self.process.pid)
-			#self.web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
-			# return self.process
+			return pid
 
 		def stop(self):
 			self.process.terminate()
