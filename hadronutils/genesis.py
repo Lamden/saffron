@@ -12,8 +12,8 @@ import subprocess
 
 class MemoizedChain:
 	class __Chain:
-		def __init__(self, project_dir='', genesis_block_payload=None, genesis_block_path='genesis.json'):
-			self.project_dir = hadron_home
+		def __init__(self, project_dir='.', genesis_block_payload=None, genesis_block_path='genesis.json', cwd=True):
+			self.project_dir = project_dir if cwd else hadron_home
 			self.genesis_block_path = genesis_block_path
 			database.init_dbs([database.create_contracts, database.create_accounts])
 			self.database = database
@@ -29,9 +29,9 @@ class MemoizedChain:
 				create_account('password')
 
 		def start(self):
-			import subprocess
 			GETH = subprocess.check_output(['which','geth'])
-			pid = os.spawnl(os.P_NOWAITO, GETH.strip(), 'geth','--datadir',self.project_dir, '--etherbase','0', '&')
+			#pid = os.spawnlp(os.P_NOWAITO, GETH.strip(), 'geth','--datadir',self.project_dir, '--etherbase','0', '&')
+			pid = subprocess.Popen(['nohup', GETH.strip(), 'geth --datadir {} --etherbase 0'.format(self.project_dir)])
 			return pid
 
 		def stop(self):
@@ -44,7 +44,7 @@ class MemoizedChain:
 			return False
 
 	instance = None
-	def __init__(self, project_dir='.', genesis_block_payload=None, genesis_block_path='genesis.json'):
+	def __init__(self, project_dir='.', genesis_block_payload=None, genesis_block_path='genesis.json', cdw=True):
 		if not Chain.instance:
 			Chain.instance = Chain.__Chain(project_dir, genesis_block_payload, genesis_block_path)
 		#else:
