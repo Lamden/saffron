@@ -1,0 +1,18 @@
+\begin{thebibliography}{1}
+
+\bibitem{einstein}
+Albert Einstein.
+\newblock {Zur Elektrodynamik bewegter K{\"o}rper}. ({German}) [{On} the
+  electrodynamics of moving bodies].
+\newblock {\em Annalen der Physik}, 322(10):891--921, 1905.
+
+\bibitem{latexcompanion}
+Michel Goossens, Frank Mittelbach, and Alexander Samarin.
+\newblock {\em The \LaTeX\ Companion}.
+\newblock Addison-Wesley, Reading, Massachusetts, 1993.
+
+\bibitem{knuthwebsite}
+Donald Knuth.
+\newblock Knuth: Computers and typesetting.
+
+\end{thebibliography}

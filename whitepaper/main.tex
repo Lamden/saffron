@@ -35,7 +35,7 @@
 \maketitle
 
 \section{Introduction}
-The greatest achievements in society do not come from the technology itself, but by the users who use it. Technology has increased the living standards world wide. With the advent of the personal computer, using the same techniques of the great innovators who came before us, we have developed a system of tools that allows the construction and deployment of blockchains for individual applications in as little effort as possible. Through a smart contract tool, a package repository, chain-to-chain communication router, and smart contract event locks, we have created a tool for the development community for deploying their crypto toolset of choice. Thus, the Hadron Ledger is a continuation on great practices to make great technologies even better through accessibility, which in the hands of the users spurs the greatest achievements.
+The best technology can never succeed unless it is propgated to the masses in an appropriate way. We see examples of this throughout history. Henry Ford brought the price of the automobile down so that more people could afford one which then spurred a transportation revolution. Steve Jobs and Bill Gates took the computer out of the mainframe rooms of high tech businesses and colleges and packed them into a size that could be used by consumers. We are taking the same approach with blockchain technology. By modelling our tools off of the most popular command-line interfaces, package managers, and web applications, we are abstracting the difficult portions of blockchain technology away and shaping it like modern web development. Thus, Hadron is a set of blockchain development tools and infrastructure designed to be easy and understandable to the average developer.
 
 \section{Motivation}
 
@@ -44,18 +44,6 @@ In the past several years, we have seen an influx of blockchain technologies hit
 The Hadron project is an effort to create software development tools that increase the mass adoption of blockchain technology so infrastructure can revolutionize the market systems and cause realistic innovation within the markets.
 
 Laid out in this white paper is our critiques of the current state of the markets, and how we plan on improving this space.
-
-\section{Goals of the Project}
-
-The Hadron Project aims to create a platform that lowers the barrier of entry for innovators and developers to start inventing with state-of-the-art blockchain software in a way that most developers are already familiar with. To provide the cognitive scaffolding, and offloading of the lower level blockchain operations that prevent many from diving into the field.
-
-Transaction costs on the chain are based on a method of off-network chain-based proof of ownership using a synchronous eventing model, which reduces to gas prices significantly, and the end result is a network of private blockchains dedicated to each application that communicate with one another over a distributed crypto routing system known as the Hadron Ledger. The ledger uses a Proof of Work algorithm directly linked to the amount of transactions a miner has helped to confirm. Representative tokens that can be used to purchase transaction power on the entire HL represent this work.
-
-There are three parts of the project: the Hadron Wrapper, a rapid blockchain generator tool, the Hadron Hub, a public repository for package management and application discovery to increase development speed, and the Hadron Ledger, which provides the framework of chain-to-chain payment channels to exchange any asset type between blockchain applications. Services are hosted via an IPFS cluster, and work is distributed between peers on a decentralized computing network retaining the distributed and trustless nature of cryptocurrency projects. The marketplace for container deployment via the Hadron Hub will utilize the verifiable ledger to execute these container deployments based on the current marketplace for deploying server infrastructure.
-
-We believe that by building up a marketplace of smart contracts, deployable abstractions, and composable deployments, we can effectively create a market of technological abstractions and pipelines for deploying the applications of the future.
-
-These technologies are laid out later on in the paper following the motivations and rationale behind the project.
 
 \section{Problems with Current Blockchain\\ Implementations}
 
@@ -299,6 +287,42 @@ To make sure that the payments have been sent through in a timely fashion, each 
 While private chains on Hadron are built off of Ethereum which is a distributed and trustless protocol, the rest of the Hadron systems could be developed using standard centralized server-client architecture. However, while this is potentially an easier method of execution, standard HTTP protocol is vulnerable to DDOS attacks, server failure, and centralized ownership of data that sacrifices the rights of the collaborators of the project.
 
 Thus, the project will be deployed upon the IPFS protocol to establish a true peer to peer system that is distributed and trustless.
+
+\begin{center}
+\textbf{Motivation for Independent Consensus}
+\end{center}
+
+What makes blockchain technology work is the fact that miners are independent actors that verify transactions that occur so it is near impossible to inject false information into the chain. However, in traditional settings, miners are rewarded in cryptocurrency from transaction fees. Because transactions are free on the Hadron protocol, a different rewarding mechanism must be instilled so that miners are still motivated to provide independent verification of transactions.
+
+It is possible to create proof-of-work, proof-of-stake, and any other rewarding schemes by using smart contracts. In this way, a smart contract can be called upon to calculate the reward and recipient, and reward any type of asset on the chain. Instead of just the native currency of the chain (which is initially Ether), ERC20 tokens or novel cryptoasset implementations can be rewarded as well, providing even more customization to private chains. And because transactions and gas is free on the networks, calling a contract one a block, for example, is not expensive.
+
+\begin{lstlisting}[
+	belowskip=1mm,
+	title={\small\textnormal{Here is an example of a simple proof-of-work contract that could be deployed on a chain to simulate classical proof-of-work.}},
+	captionpos=b]
+pragma solidity ^0.4.15;
+
+contract RewardedAsset {
+    string public constant symbol = "AU";
+    string public constant name = "Digital Gold";
+    uint8 public constant decimals = 0;
+    uint256 _totalSupply = 1000000000;
+    uint8 public reward = 10;
+
+    address public owner;
+    mapping(address => uint256) balances;
+    mapping(address => mapping (address => uint256)) allowed;
+...
+
+    function disperseRewards (bool success) onlyOwner() {
+        if (lastBlock < block.number) {
+            _totalSupply += reward;
+            balances[block.coinbase] += reward;
+            lastBlock = block.number;
+        }
+    }
+
+\end{lstlisting}
 
 \begin{center}
 \textbf{Bosons, an agnostic digital currency}
