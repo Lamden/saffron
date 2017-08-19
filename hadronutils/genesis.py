@@ -4,16 +4,17 @@ import sqlite3
 from web3 import Web3, KeepAliveRPCProvider
 import web3
 
-from hadronutils.utils import create_genesis_block, initialize_chain, create_account, GENESIS_BLOCK_TEMPLATE
 from hadronutils import database
 from hadronutils.settings import hadron_home
 
 import subprocess
 
+from hadronutils.utils import create_genesis_block, initialize_chain, create_account, GENESIS_BLOCK_TEMPLATE
+
 class MemoizedChain:
 	class __Chain:
-		def __init__(self, project_dir='', genesis_block_payload=None, genesis_block_path='genesis.json'):
-			self.project_dir = hadron_home
+		def __init__(self, project_dir='.', genesis_block_payload=None, genesis_block_path='genesis.json', cwd=True):
+			self.project_dir = project_dir if cwd else hadron_home
 			self.genesis_block_path = genesis_block_path
 			database.init_dbs([database.create_contracts, database.create_accounts])
 			self.database = database
@@ -29,11 +30,10 @@ class MemoizedChain:
 				create_account('password')
 
 		def start(self):
-			self.process = subprocess.Popen('geth --datadir {} --etherbase 0'.format(self.project_dir), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-			import pdb;pdb.set_trace()
-			self.process.pid
-			#self.web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
-			return self.process
+			GETH = subprocess.check_output(['which','geth'])
+			#pid = os.spawnlp(os.P_NOWAITO, GETH.strip(), 'geth','--datadir',self.project_dir, '--etherbase','0', '&')
+			proc = subprocess.Popen(['nohup', GETH.strip(), 'geth --datadir {} --etherbase 0'.format(self.project_dir)])
+			return proc
 
 		def stop(self):
 			self.process.terminate()
@@ -45,7 +45,7 @@ class MemoizedChain:
 			return False
 
 	instance = None
-	def __init__(self, project_dir='.', genesis_block_payload=None, genesis_block_path='genesis.json'):
+	def __init__(self, project_dir='.', genesis_block_payload=None, genesis_block_path='genesis.json', cdw=True):
 		if not Chain.instance:
 			Chain.instance = Chain.__Chain(project_dir, genesis_block_payload, genesis_block_path)
 		#else:
