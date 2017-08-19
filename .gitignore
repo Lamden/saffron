@@ -106,3 +106,4 @@ geth/
 keystore/
 test_project
 *.pyc
+.DS_Store
