@@ -4,11 +4,12 @@ import sqlite3
 from web3 import Web3, KeepAliveRPCProvider
 import web3
 
-from hadronutils.utils import create_genesis_block, initialize_chain, create_account, GENESIS_BLOCK_TEMPLATE
 from hadronutils import database
 from hadronutils.settings import hadron_home
 
 import subprocess
+
+from hadronutils.utils import create_genesis_block, initialize_chain, create_account, GENESIS_BLOCK_TEMPLATE
 
 class MemoizedChain:
 	class __Chain:
@@ -31,8 +32,8 @@ class MemoizedChain:
 		def start(self):
 			GETH = subprocess.check_output(['which','geth'])
 			#pid = os.spawnlp(os.P_NOWAITO, GETH.strip(), 'geth','--datadir',self.project_dir, '--etherbase','0', '&')
-			pid = subprocess.Popen(['nohup', GETH.strip(), 'geth --datadir {} --etherbase 0'.format(self.project_dir)])
-			return pid
+			proc = subprocess.Popen(['nohup', GETH.strip(), 'geth --datadir {} --etherbase 0'.format(self.project_dir)])
+			return proc
 
 		def stop(self):
 			self.process.terminate()

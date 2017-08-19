@@ -23,7 +23,8 @@ def start():
 	except:
 		raise Exception('Could not start chain. No genesis.json in this directory. Change directories or initialize a new chain.')
 	print('Starting chain...')
-	proc = Chain().start()
+	chain = Chain()
+	proc = chain.start()
 	print(proc.pid)
 	with open('.pid', 'w') as f:
 		f.write(str(proc.pid))
