@@ -2,6 +2,8 @@ import argparse
 from hadronutils import utils
 from hadronutils import settings
 from hadronutils.genesis import Chain
+import configparser
+from os.path import join
 import os
 import click
 import subprocess
@@ -68,3 +70,33 @@ def deploy_contract(filename, name=None):
 		contract.deploy()
 	except:
 		raise Exception('Could not deploy contract.')
+
+# add new for contracts and addresses
+@cli.command()
+@click.argument('option', required=False)
+@click.option('--name', '-n', required=False, default=None)
+def new(option, name):
+	assert option != None and option in ['account', 'contract'], 'Provide either "account" or "contract" after "new"'
+	if option == 'account':
+		print('Generating new account.')
+		
+		project_dir = ''
+		run_location, filename = os.path.split(os.path.abspath(__file__))
+		config = configparser.ConfigParser()
+		config.read(os.path.join(run_location, 'config/default.conf'))
+		settings.hadron_home = os.getcwd()
+		settings.hadron_folder_path = join(settings.hadron_home, project_dir)
+		settings.hadron_db_file = join(settings.hadron_folder_path, config.defaults()['hadron_db_file'])
+		
+		user_input = input('Enter password for new account: ')
+		print(utils.create_account(user_input))
+	else:
+		print('Generating new contract.')
+	pass
+
+# add list for contracts and addresses
+@cli.command()
+@click.argument('option', required=False)
+def list(option):
+	assert option != None and option in ['account', 'contract'], 'Provide either "account" or "contract" after "list"'
+	pass

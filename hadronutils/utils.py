@@ -30,6 +30,19 @@ GENESIS_BLOCK_TEMPLATE = {
 	'timestamp'  : '0x00'
 }
 
+NODE_INFO_TEMPLATE = {
+	'identity' : 'GenesisNode',
+	'rpc' : True,
+	'rpcport' : 8000,
+	'rpccorsdomain' : '*',
+	'port' : 30303,
+	'nodiscover' : True,
+	'ipcapi' : 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3',
+	'rpcapi' : 'db,eth,net,web3',
+	'autodag' : True,
+	'networkid' : 1900
+}
+
 INT16 = 18446744073709551615
 
 def check_if_in_project():
@@ -79,6 +92,23 @@ def create_genesis_block(genesisBlockPayload):
 	with open(os.path.join(settings.hadron_folder_path, 'genesis.json'), 'w') as fp:
 		json.dump(genesisBlockPayload, fp)
 
+def create_node_info(nodeInfoPayload):
+	assert all(x in \
+	['identity',
+	'rpc',
+	'rpcport',
+	'rpccorsdomain',
+	'port',
+	'nodiscover',
+	'ipcapi',
+	'rpcapi',
+	'autodag',
+	'networkid'] \
+	for x in list(nodeInfoPayload.keys()))
+
+	with open(os.path.join(settings.hadron_folder_path, 'node.info'), 'w') as fp:
+		json.dump(nodeInfoPayload, fp)
+
 def initialize_chain(project_dir, genesisBlockFp):
 	#Chain(project_dir=settings.hadron_folder_path, genesis_block_path=os.path.join(settings.hadron_folder_path, genesisBlockFp))
 	subprocess.Popen(['nohup', 'geth --datadir ' + settings.hadron_folder_path + ' init ' + os.path.join(settings.hadron_folder_path, genesisBlockFp)], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -88,6 +118,33 @@ def run_generator():
 		# create a new chain!
 		print('=== Project Name ===')
 		project_dir = input('Name your new Hadron project: ')
+
+		node_info = NODE_INFO_TEMPLATE
+		while True:
+			print('\n=== Network Settings ===')
+			node_info = NODE_INFO_TEMPLATE
+
+			user_input = input('Master Node Identity (optional, default = MasterNode): ')
+			node_info['identity'] = user_input if user_input else node_info['identity']
+
+			user_input = input('RPC Port (optional, default = 8000): ')
+			node_info['rpcport'] = formatting(user_input) if formatting(user_input) > 0 else node_info['rpcport']
+
+			user_input = input('General Port (optional, default = 30303): ')
+			node_info['port'] = formatting(user_input) if formatting(user_input) > 0 else node_info['port']
+
+			user_input = input('Allow public discovery? (required, default = false) (y/n): ')
+			node_info['nodiscover'] = False if user_input == 'y' else node_info['nodiscover']
+
+			user_input = input('Autodag? (required, default = true) (y/n): ')
+			node_info['autodag'] = True if user_input == 'y' else node_info['autodag']
+
+			print('Does the following payload look correct?\n')
+			pprint.pprint(node_info)
+			user_input = input('\n(y/n): ')
+			if user_input is 'y':
+				break
+			print('\n... Throwing away old data and starting fresh ...\n')
 
 		while True:
 			print('\n=== Blockchain Settings ===')
@@ -141,10 +198,6 @@ def run_generator():
 		settings.hadron_home = os.environ.get('HADRON_HOME', None) if os.environ.get('HADRON_HOME', None) else os.getcwd()
 		settings.hadron_folder_path = os.environ.get('HADRON_FOLDER_PATH', None) if os.environ.get('HADRON_FOLDER_PATH', None) else join(settings.hadron_home, project_dir)
 		settings.hadron_db_file = os.environ.get('HADRON_DB_FILE', None) if os.environ.get('HADRON_DB_FILE', None) else join(settings.hadron_folder_path, config.defaults()['hadron_db_file'])
-		
-		print(settings.hadron_home)
-		print(settings.hadron_folder_path)
-		print(settings.hadron_db_file)
 
 		try:
 		    os.makedirs(settings.hadron_folder_path)
@@ -157,6 +210,9 @@ def run_generator():
 
 		create_genesis_block(genesis)
 		print('Genesis block written!')
+
+		create_node_info(node_info)
+		print('Node info written!')
 
 		print('\n=== Initializing Chain... ===\n')
 		initialize_chain(settings.hadron_folder_path, 'genesis.json')
@@ -172,12 +228,12 @@ def run_generator():
 
 # this should be added to the account class in some capacity
 def create_account(password):
-	print(settings.hadron_folder_path)
 	with open(os.path.join(settings.hadron_folder_path, 'pass.temp'), 'w') as fp:
 		fp.write(password)
 	proc = subprocess.Popen('geth --datadir {} --password {} account new'.format(settings.hadron_folder_path, os.path.join(settings.hadron_folder_path, 'pass.temp')), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	account_string = proc.stdout.read().decode('utf-8')
 	# return the regex account
+	subprocess.Popen('rm {}'.format(os.path.join(settings.hadron_folder_path, 'pass.temp')), shell=True)
 	try:
 		return re.split(r"\{|\}", account_string)[0]
 	except Exception as e:
