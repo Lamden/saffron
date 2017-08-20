@@ -80,8 +80,8 @@ def create_genesis_block(genesisBlockPayload):
 		json.dump(genesisBlockPayload, fp)
 
 def initialize_chain(project_dir, genesisBlockFp):
-	Chain(project_dir=settings.hadron_folder_path, genesis_block_path=os.path.join(settings.hadron_folder_path, genesisBlockFp))
-	#subprocess.Popen(['nohup', 'geth --datadir ' + settings.hadron_folder_path + ' init ' + os.path.join(settings.hadron_folder_path, genesisBlockFp)], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	#Chain(project_dir=settings.hadron_folder_path, genesis_block_path=os.path.join(settings.hadron_folder_path, genesisBlockFp))
+	subprocess.Popen(['nohup', 'geth --datadir ' + settings.hadron_folder_path + ' init ' + os.path.join(settings.hadron_folder_path, genesisBlockFp)], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 def run_generator():
 	if not check_if_in_project():
