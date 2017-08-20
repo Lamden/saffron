@@ -13,7 +13,7 @@ Hadron is a project that aims to make construction and deployment of blockchains
 #### Where are we at so far?
 Right now, we have an extremely rudementary generator for Ethereum blockchains and an API that treats smart contract interaction like API calls.
 
-## give it a go
+## Give it a go
 
 ```
 virtualenv venv_hadron
