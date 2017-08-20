@@ -1,7 +1,7 @@
 # Hadron Ledger
 #### Better Blockchains for Real World Applications
 
-![Travis CI](https://travis-ci.org/Hadron-Ledger/hadron.svg?branch=master)
+![Travis CI](https://travis-ci.org/Hadron-Ledger/wrapper.svg?branch=master)
 
 Hadron is a project that aims to make construction and deployment of blockchains easy for developers and enterprises. In it's current form, it relies on the Ethereum technology as a solid base to serve a blockchain with a ton of great features for most use-cases. Here are our goals:
 
