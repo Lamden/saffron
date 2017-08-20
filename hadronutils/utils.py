@@ -7,7 +7,7 @@ import time
 from threading import Thread
 import re
 from hadronutils import settings
-from hadronutils.genesis import Chain
+#from hadronutils.genesis import Chain
 import getpass
 import configparser
 from os.path import join
