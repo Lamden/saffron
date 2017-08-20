@@ -5,6 +5,8 @@ from hadronutils.genesis import Chain
 import os
 import click
 import subprocess
+import uuid
+import glob
 
 @click.group()
 def cli():
@@ -42,10 +44,27 @@ def stop():
 
 @cli.command()
 @click.argument('filename', required=False)
-def deploy(filename):
+@click.option('--name', '-n', required=False, default=None)
+def deploy(filename, name):
+	try:
+		os.chdir(os.path.join(os.getcwd(), '/contracts'))
+	except:
+		raise Exception('Could not find contracts directory. Are you in the project folder?')
+
 	if filename == None:
-		# deploy all the contracts in the directory
-		print('deploying all contracts...')
+		print('Deploying all contracts...')
+		# glob it
+		filenames = glob.glob("*.sol")
+		for file in filenames:
+			deploy_contract(file, name)
 	else:
-		print(filename)
-	pass
+		deploy_contract(filename, name)
+
+def deploy_contract(filename, name=None):
+	if name == None:
+		name = str(uuid.uuid1())
+	contract = Contract(name, filename)
+	try:
+		contract.deploy()
+	except:
+		raise Exception('Could not deploy contract.')
