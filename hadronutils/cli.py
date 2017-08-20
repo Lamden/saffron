@@ -39,3 +39,13 @@ def stop():
 		print('All instances of geth stopped.')
 	except:
 		raise Exception('Could not stop chain.')
+
+@cli.command()
+@click.argument('filename', required=False)
+def deploy(filename):
+	if filename == None:
+		# deploy all the contracts in the directory
+		print('deploying all contracts...')
+	else:
+		print(filename)
+	pass
