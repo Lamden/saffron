@@ -133,6 +133,9 @@ def run_generator():
 			user_input = input('General Port (optional, default = 30303): ')
 			node_info['port'] = formatting(user_input) if formatting(user_input) > 0 else node_info['port']
 
+			user_input = input('Network ID (required, default = 1900): ')
+			node_info['networkid'] = formatting(user_input) if formatting(user_input) > 0 else node_info['networkid']
+
 			user_input = input('Allow public discovery? (required, default = false) (y/n): ')
 			node_info['nodiscover'] = False if user_input == 'y' else node_info['nodiscover']
 
@@ -221,6 +224,8 @@ def run_generator():
 		user_input = input('Enter password for default account: ')
 		create_account(user_input)
 		print('Blockchain generated!')
+
+		print(generate_process_string())
 	else:
 		print('Already in a project directory...')
 
@@ -242,6 +247,20 @@ def create_account(password):
 		except Exception as e:
 			raise e
 	#os.remove('pass.temp')
+
+def generate_process_string():
+	assert open(os.path.join(settings.hadron_folder_path, 'genesis.json')) and open(os.path.join(settings.hadron_folder_path, 'node.info')), 'Genesis and Node info are not in this directory.'
+	node_info = json.loads(open(os.path.join(settings.hadron_folder_path, 'node.info')).read())
+	process_string = 'geth --identity {}'.format(node_info['identity'])
+	process_string += ' --genesis {}'.format(os.path.join(settings.hadron_folder_path, 'genesis.json'))
+	process_string += ' --rpc --rpcport "{}" --rpccorsdomain "*"'.format(node_info['rpcport']) if node_info['rpc'] else ''
+	process_string += ' --datadir {}'.format(settings.hadron_folder_path)
+	process_string += ' --port "{}"'.format(node_info['port'])
+	process_string += ' --nodiscover' if node_info['nodiscover'] == True else ''
+	process_string += ' --ipcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --rpcapi "db,eth,net,web3"'
+	process_string += ' --autodag' if node_info['autodag'] == True else ''
+	process_string += ' --networkid "{}"'.format(node_info['networkid'])
+	return process_string
 
 def close_if_timeout(process, timeout=3000):
 	output = b''
