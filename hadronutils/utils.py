@@ -111,7 +111,9 @@ def create_node_info(nodeInfoPayload):
 
 def initialize_chain(project_dir, genesisBlockFp):
 	#Chain(project_dir=settings.hadron_folder_path, genesis_block_path=os.path.join(settings.hadron_folder_path, genesisBlockFp))
-	subprocess.Popen(['nohup', 'geth --datadir ' + settings.hadron_folder_path + ' init ' + os.path.join(settings.hadron_folder_path, genesisBlockFp)], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	GETH = subprocess.check_output(['which','geth'])
+	print('geth --datadir ' + settings.hadron_folder_path + ' init ' + os.path.join(project_dir, genesisBlockFp))
+	subprocess.Popen(['geth --datadir ' + settings.hadron_folder_path + ' init ' + os.path.join(project_dir, genesisBlockFp)], shell=True, stderr=subprocess.PIPE)
 
 def run_generator():
 	if not check_if_in_project():
@@ -255,12 +257,13 @@ def generate_process_string():
 	#"C:\Program Files\Geth\geth.exe" --rpc --rpcaddr "0.0.0.0" --rpcport "8545" --rpccorsdomain "http://localhost:1010" --rpcapi "web3,eth --networkid 1001201 --datadir ~/ --gasprice 0 console
 
 	process_string = 'geth --identity {}'.format(node_info['identity'])
-	process_string += ' --rpc --rpcport "{}" --rpccorsdomain "*"'.format(node_info['rpcport']) if node_info['rpc'] else ''
+	process_string += ' --rpc --rpcaddr "0.0.0.0" --rpcport "{}" --rpccorsdomain "*"'.format(node_info['rpcport']) if node_info['rpc'] else ''
 	process_string += ' --datadir {}'.format(settings.hadron_folder_path)
 	process_string += ' --port "{}"'.format(node_info['port'])
 	process_string += ' --nodiscover' if node_info['nodiscover'] == True else ''
 	process_string += ' --rpcapi "db,eth,net,web3"'
 	process_string += ' --networkid "{}"'.format(node_info['networkid'])
+	process_string += ' --gasprice 0 --mine'
 	return process_string
 
 def close_if_timeout(process, timeout=3000):
