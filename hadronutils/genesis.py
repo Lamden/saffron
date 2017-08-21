@@ -5,11 +5,11 @@ from web3 import Web3, KeepAliveRPCProvider
 import web3
 
 from hadronutils import database
-from hadronutils.settings import hadron_home
+from hadronutils.settings import hadron_home, change_to_cwd
 
 import subprocess
 
-from hadronutils.utils import create_genesis_block, initialize_chain, create_account, GENESIS_BLOCK_TEMPLATE
+from hadronutils.utils import create_genesis_block, initialize_chain, create_account, GENESIS_BLOCK_TEMPLATE, generate_process_string
 
 class MemoizedChain:
 	class __Chain:
@@ -32,7 +32,9 @@ class MemoizedChain:
 		def start(self):
 			GETH = subprocess.check_output(['which','geth'])
 			#pid = os.spawnlp(os.P_NOWAITO, GETH.strip(), 'geth','--datadir',self.project_dir, '--etherbase','0', '&')
-			proc = subprocess.Popen(['nohup', GETH.strip(), 'geth --datadir {} --etherbase 0'.format(self.project_dir)])
+			geth_string = generate_process_string()
+			print(geth_string)
+			proc = subprocess.Popen(['nohup', GETH.strip(), geth_string])
 			return proc
 
 		def stop(self):

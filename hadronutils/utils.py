@@ -251,14 +251,15 @@ def create_account(password):
 def generate_process_string():
 	assert open(os.path.join(settings.hadron_folder_path, 'genesis.json')) and open(os.path.join(settings.hadron_folder_path, 'node.info')), 'Genesis and Node info are not in this directory.'
 	node_info = json.loads(open(os.path.join(settings.hadron_folder_path, 'node.info')).read())
+	
+	#"C:\Program Files\Geth\geth.exe" --rpc --rpcaddr "0.0.0.0" --rpcport "8545" --rpccorsdomain "http://localhost:1010" --rpcapi "web3,eth --networkid 1001201 --datadir ~/ --gasprice 0 console
+
 	process_string = 'geth --identity {}'.format(node_info['identity'])
-	process_string += ' --genesis {}'.format(os.path.join(settings.hadron_folder_path, 'genesis.json'))
 	process_string += ' --rpc --rpcport "{}" --rpccorsdomain "*"'.format(node_info['rpcport']) if node_info['rpc'] else ''
 	process_string += ' --datadir {}'.format(settings.hadron_folder_path)
 	process_string += ' --port "{}"'.format(node_info['port'])
 	process_string += ' --nodiscover' if node_info['nodiscover'] == True else ''
-	process_string += ' --ipcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --rpcapi "db,eth,net,web3"'
-	process_string += ' --autodag' if node_info['autodag'] == True else ''
+	process_string += ' --rpcapi "db,eth,net,web3"'
 	process_string += ' --networkid "{}"'.format(node_info['networkid'])
 	return process_string
 

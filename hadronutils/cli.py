@@ -26,6 +26,15 @@ def start():
 		genesis_payload = open(os.path.abspath(os.path.join(os.getcwd(), 'genesis.json')), 'r').read()
 	except:
 		raise Exception('Could not start chain. No genesis.json in this directory. Change directories or initialize a new chain.')
+	
+	project_dir = ''
+	run_location, filename = os.path.split(os.path.abspath(__file__))
+	config = configparser.ConfigParser()
+	config.read(os.path.join(run_location, 'config/default.conf'))
+	settings.hadron_home = os.environ.get('HADRON_HOME', None) if os.environ.get('HADRON_HOME', None) else os.getcwd()
+	settings.hadron_folder_path = os.environ.get('HADRON_FOLDER_PATH', None) if os.environ.get('HADRON_FOLDER_PATH', None) else join(settings.hadron_home, project_dir)
+	settings.hadron_db_file = os.environ.get('HADRON_DB_FILE', None) if os.environ.get('HADRON_DB_FILE', None) else join(settings.hadron_folder_path, config.defaults()['hadron_db_file'])
+
 	print('Starting chain...')
 	chain = Chain()
 	proc = chain.start()
