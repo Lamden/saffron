@@ -16,3 +16,11 @@ try:
     os.makedirs(lamden_folder_path)
 except OSError as e:
     pass
+
+def change_to_cwd(project_dir=''):
+	run_location, filename = os.path.split(os.path.abspath(__file__))
+	config = configparser.ConfigParser()
+	config.read(os.path.join(run_location, 'config/default.conf'))
+	lamden_home = os.getcwd()
+	lamden_folder_path = join(lamden_home, project_dir)
+	lamden_db_file = join(lamden_folder_path, config.defaults()['lamden_db_file'])
