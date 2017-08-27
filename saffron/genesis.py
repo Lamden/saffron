@@ -9,7 +9,7 @@ from saffron.settings import lamden_home
 
 import subprocess
 
-from saffron.utils import create_genesis_block, initialize_chain, create_account, GENESIS_BLOCK_TEMPLATE
+from saffron.utils import create_genesis_block, initialize_chain, create_account, GENESIS_BLOCK_TEMPLATE, generate_process_string
 
 class MemoizedChain:
 	class __Chain:

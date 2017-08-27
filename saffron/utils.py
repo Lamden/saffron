@@ -268,14 +268,28 @@ def generate_process_string():
 	process_string += ' --gasprice 0 --mine'
 	return process_string
 
-def close_if_timeout(process, timeout=3000):
-	output = b''
-	time = 0
-	while time < timeout:
-		if output == process.stdout.read():
-			time += 1
-		else:
-			output = process.stdout.read()
-			time = 0
-		# sleep one millisecond
-		time.sleep(0.0001)
+def new_chain(home_path=None, node_info=None, genesis_block=None, etherbase_pass=None):
+	assert etherbase_pass != None, 'Password for Etherbase account must be provided.'
+	if home_path != None:
+		# modify if using the --home_dir option or the current working directory (current working directory is the default)
+		run_location, filename = os.path.split(os.path.abspath(__file__))
+		config = configparser.ConfigParser()
+		config.read(os.path.join(run_location, 'config/default.conf'))
+		settings.lamden_home = os.environ.get('LAMDEN_HOME', None) if os.environ.get('LAMDEN_HOME', None) else os.getcwd()
+		settings.lamden_folder_path = os.environ.get('LAMDEN_FOLDER_PATH', None) if os.environ.get('LAMDEN_FOLDER_PATH', None) else join(settings.lamden_home, project_dir)
+		settings.lamden_db_file = os.environ.get('LAMDEN_DB_FILE', None) if os.environ.get('LAMDEN_DB_FILE', None) else join(settings.lamden_folder_path, config.defaults()['lamden_db_file'])
+
+	if node_info == None:
+		node_info = NODE_INFO_TEMPLATE
+
+	if genesis_block == None:
+		genesis_block = GENESIS_BLOCK_TEMPLATE
+
+	try:
+		os.makedirs(settings.lamden_folder_path)
+		create_genesis_block(genesis_block)
+		create_node_info(node_info)
+		initialize_chain(settings.lamden_folder_path, 'genesis.json')
+		create_account(etherbase_pass)
+	except Exception as e:
+		raise e
