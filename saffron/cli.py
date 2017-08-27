@@ -1,15 +1,10 @@
 import argparse
-<<<<<<< HEAD:hadronutils/cli.py
-from hadronutils import utils
-from hadronutils import settings
-from hadronutils.genesis import Chain
+
 import configparser
 from os.path import join
-=======
 from saffron import utils
 from saffron import settings
 from saffron.genesis import Chain
->>>>>>> 2e03436170c29e8cc15885d083448d7e68406dae:saffron/cli.py
 import os
 import click
 import subprocess
