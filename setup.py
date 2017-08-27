@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 
-setup(name='hadronutils',
+setup(name='saffron',
       install_requires=[
           'werkzeug',
           'gevent>=1.1.0',
@@ -15,13 +15,13 @@ setup(name='hadronutils',
       ],
       entry_points={
           "console_scripts": [
-              "hadron=hadronutils.cli:cli",
+              "saffron=saffron.cli:cli",
           ]
       },
       include_package_data=True,
       packages=find_packages(),
       package_data={
-          'hadronutils.': [
+          'saffron.': [
               'default.conf',
           ],
           # 'hadron.node': [

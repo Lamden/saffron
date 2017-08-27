@@ -1,6 +1,6 @@
 import sqlite3
 import os, logging
-from hadronutils.settings import hadron_db_file
+from saffron.settings import lamden_db_file
 from contextlib import suppress
 create_accounts = 'CREATE TABLE accounts (name text primary key, address text)'
 
@@ -17,7 +17,7 @@ create_contracts = '''
                 )'''
 select_from = 'SELECT * FROM {table} WHERE {name} {address}'.format
 log = logging.getLogger(__file__)
-connection = sqlite3.connect(hadron_db_file)
+connection = sqlite3.connect(lamden_db_file)
 cursor = cursor = connection.cursor()
 
 # graceful initialization tries to create new tables as a test to see if this is a new DB or not

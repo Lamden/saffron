@@ -1,5 +1,5 @@
 import pytest
-from hadronutils import utils
+from saffron import utils
 
 
 def test_check_if_in_project():

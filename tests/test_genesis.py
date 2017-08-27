@@ -5,9 +5,9 @@ import pprint
 import json
 import os
 
-from hadronutils.genesis import Chain
-from hadronutils.utils import *
-from hadronutils.accounts import Account
+from saffron.genesis import Chain
+from saffron.utils import *
+from saffron.accounts import Account
 
 test_genesis_block = {'alloc': {},
  'coinbase': '0x0000000000000000000000000000000000000000',
