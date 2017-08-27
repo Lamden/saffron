@@ -237,16 +237,19 @@ def generate_process_string():
 	process_string += ' --gasprice 0 --mine'
 	return process_string
 
+def change_home_path(home_path=None):
+	assert home_path != None, 'Provide a new home path.'
+	run_location, filename = os.path.split(os.path.abspath(__file__))
+	config = configparser.ConfigParser()
+	config.read(os.path.join(run_location, 'config/default.conf'))
+	settings.lamden_home = os.environ.get('LAMDEN_HOME', None) if os.environ.get('LAMDEN_HOME', None) else os.getcwd()
+	settings.lamden_folder_path = os.environ.get('LAMDEN_FOLDER_PATH', None) if os.environ.get('LAMDEN_FOLDER_PATH', None) else join(settings.lamden_home, home_path)
+	settings.lamden_db_file = os.environ.get('LAMDEN_DB_FILE', None) if os.environ.get('LAMDEN_DB_FILE', None) else join(settings.lamden_folder_path, config.defaults()['lamden_db_file'])
+
 def new_chain(home_path=None, node_info=None, genesis_block=None, etherbase_pass=None):
 	assert etherbase_pass != None, 'Password for Etherbase account must be provided.'
 	if home_path != None:
-		# modify if using the --home_dir option or the current working directory (current working directory is the default)
-		run_location, filename = os.path.split(os.path.abspath(__file__))
-		config = configparser.ConfigParser()
-		config.read(os.path.join(run_location, 'config/default.conf'))
-		settings.lamden_home = os.environ.get('LAMDEN_HOME', None) if os.environ.get('LAMDEN_HOME', None) else os.getcwd()
-		settings.lamden_folder_path = os.environ.get('LAMDEN_FOLDER_PATH', None) if os.environ.get('LAMDEN_FOLDER_PATH', None) else join(settings.lamden_home, home_path)
-		settings.lamden_db_file = os.environ.get('LAMDEN_DB_FILE', None) if os.environ.get('LAMDEN_DB_FILE', None) else join(settings.lamden_folder_path, config.defaults()['lamden_db_file'])
+		change_home_path(home_path=home_path)
 
 	if node_info == None:
 		node_info = NODE_INFO_TEMPLATE
@@ -256,6 +259,7 @@ def new_chain(home_path=None, node_info=None, genesis_block=None, etherbase_pass
 
 	try:
 		os.makedirs(settings.lamden_folder_path)
+		os.makedirs(join(settings.lamden_folder_path, 'contracts'))
 		create_genesis_block(genesis_block)
 		create_node_info(node_info)
 		initialize_chain(settings.lamden_folder_path, 'genesis.json')

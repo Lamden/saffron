@@ -17,9 +17,11 @@ from saffron.accounts import Account
 from saffron.genesis import Chain
 from saffron import database
 
+import pickle
+
 DEFAULT_CONTRACT_DIRECTORY = './contracts'
 
-save_contract_sql = '''
+insert_contract_sql = '''
 			INSERT INTO contracts VALUES (
 			name {}, 
 			abi {},
@@ -110,7 +112,7 @@ class Contract():
 		self.abi = self.contracts['abi']
 		self.metadata = self.contracts['metadata']
 		self.bytecode = self.contracts['evm']['deployedBytecode']['object']
-		self.gas_estimate = self.contracts['evm']['gasEstimates']
+		self.gas_estimates = self.contracts['evm']['gasEstimates']
 		self.method_identifiers = self.contracts['evm']['methodIdentifiers']
 		
 		# set in deploy
@@ -127,7 +129,7 @@ class Contract():
 		assert not self.is_deployed, 'This contract already exists on the chain.'
 		assert self.sol, 'No solidity code loaded into this object'
 
-		response = save_contract(self.name,
+		response = insert_contract(self.name,
 								self.abi,
 								self.bytecode,
 								self.gas_estimates,

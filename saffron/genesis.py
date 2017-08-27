@@ -13,7 +13,7 @@ from saffron.utils import create_genesis_block, initialize_chain, create_account
 
 class MemoizedChain:
 	class __Chain:
-		def __init__(self, project_dir='.', genesis_block_payload=None, genesis_block_path='genesis.json', cwd=True):
+		def __init__(self, project_dir=None, genesis_block_payload=None, genesis_block_path='genesis.json', cwd=True):
 			self.project_dir = project_dir if cwd else lamden_home
 			self.genesis_block_path = genesis_block_path
 			database.init_dbs([database.create_contracts, database.create_accounts])
@@ -47,8 +47,9 @@ class MemoizedChain:
 			return False
 
 	instance = None
-	def __init__(self, project_dir='.', genesis_block_payload=None, genesis_block_path='genesis.json', cdw=True):
+	def __init__(self, project_dir=None, genesis_block_payload=None, genesis_block_path='genesis.json', cdw=True):
 		if not Chain.instance:
+			project_dir = lamden_home
 			Chain.instance = Chain.__Chain(project_dir, genesis_block_payload, genesis_block_path)
 		#else:
 		#	Chain.instance.project_dir = project_dir
