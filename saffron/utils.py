@@ -198,11 +198,6 @@ def run_generator():
 		run_location, filename = os.path.split(os.path.abspath(__file__))
 		config = configparser.ConfigParser()
 		config.read(os.path.join(run_location, 'config/default.conf'))
-<<<<<<< HEAD:hadronutils/utils.py
-		settings.hadron_home = os.environ.get('HADRON_HOME', None) if os.environ.get('HADRON_HOME', None) else os.getcwd()
-		settings.hadron_folder_path = os.environ.get('HADRON_FOLDER_PATH', None) if os.environ.get('HADRON_FOLDER_PATH', None) else join(settings.hadron_home, project_dir)
-		settings.hadron_db_file = os.environ.get('HADRON_DB_FILE', None) if os.environ.get('HADRON_DB_FILE', None) else join(settings.hadron_folder_path, config.defaults()['hadron_db_file'])
-=======
 		settings.lamden_home = os.environ.get('LAMDEN_HOME', None) if os.environ.get('LAMDEN_HOME', None) else os.getcwd()
 		settings.lamden_folder_path = os.environ.get('LAMDEN_FOLDER_PATH', None) if os.environ.get('LAMDEN_FOLDER_PATH', None) else join(settings.lamden_home, project_dir)
 		settings.lamden_db_file = os.environ.get('LAMDEN_DB_FILE', None) if os.environ.get('LAMDEN_DB_FILE', None) else join(settings.lamden_folder_path, config.defaults()['lamden_db_file'])
@@ -210,7 +205,6 @@ def run_generator():
 		print(settings.lamden_home)
 		print(settings.lamden_folder_path)
 		print(settings.lamden_db_file)
->>>>>>> 2e03436170c29e8cc15885d083448d7e68406dae:saffron/utils.py
 
 		try:
 		    os.makedirs(settings.lamden_folder_path)
@@ -243,17 +237,12 @@ def run_generator():
 
 # this should be added to the account class in some capacity
 def create_account(password):
-<<<<<<< HEAD:hadronutils/utils.py
-	with open(os.path.join(settings.hadron_folder_path, 'pass.temp'), 'w') as fp:
-=======
 	print(settings.lamden_folder_path)
 	with open(os.path.join(settings.lamden_folder_path, 'pass.temp'), 'w') as fp:
->>>>>>> 2e03436170c29e8cc15885d083448d7e68406dae:saffron/utils.py
 		fp.write(password)
 	proc = subprocess.Popen('geth --datadir {} --password {} account new'.format(settings.lamden_folder_path, os.path.join(settings.lamden_folder_path, 'pass.temp')), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	account_string = proc.stdout.read().decode('utf-8')
 	# return the regex account
-	subprocess.Popen('rm {}'.format(os.path.join(settings.hadron_folder_path, 'pass.temp')), shell=True)
 	try:
 		return re.split(r"\{|\}", account_string)[0]
 	except Exception as e:
