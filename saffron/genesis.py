@@ -4,21 +4,12 @@ import sqlite3
 from web3 import Web3, KeepAliveRPCProvider
 import web3
 
-<<<<<<< HEAD:hadronutils/genesis.py
-from hadronutils import database
-from hadronutils.settings import hadron_home, change_to_cwd
-
-import subprocess
-
-from hadronutils.utils import create_genesis_block, initialize_chain, create_account, GENESIS_BLOCK_TEMPLATE, generate_process_string
-=======
 from saffron import database
 from saffron.settings import lamden_home
 
 import subprocess
 
 from saffron.utils import create_genesis_block, initialize_chain, create_account, GENESIS_BLOCK_TEMPLATE
->>>>>>> 2e03436170c29e8cc15885d083448d7e68406dae:saffron/genesis.py
 
 class MemoizedChain:
 	class __Chain:
