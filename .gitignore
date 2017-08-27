@@ -107,3 +107,4 @@ keystore/
 test_project
 *.pyc
 .DS_Store
+node_modules
