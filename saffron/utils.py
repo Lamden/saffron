@@ -106,13 +106,13 @@ def create_node_info(nodeInfoPayload):
 	'networkid'] \
 	for x in list(nodeInfoPayload.keys()))
 
-	with open(os.path.join(settings.hadron_folder_path, 'node.info'), 'w') as fp:
+	with open(os.path.join(settings.lamden_folder_path, 'node.info'), 'w') as fp:
 		json.dump(nodeInfoPayload, fp)
 
 def initialize_chain(project_dir, genesisBlockFp):
 	#Chain(project_dir=settings.lamden_folder_path, genesis_block_path=os.path.join(settings.lamden_folder_path, genesisBlockFp))
 	subprocess.Popen(['nohup', 'geth --datadir ' + settings.lamden_folder_path + ' init ' + os.path.join(settings.lamden_folder_path, genesisBlockFp)], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-	
+
 def run_generator():
 	if not check_if_in_project():
 		# create a new chain!
@@ -253,14 +253,14 @@ def create_account(password):
 	#os.remove('pass.temp')
 
 def generate_process_string():
-	assert open(os.path.join(settings.hadron_folder_path, 'genesis.json')) and open(os.path.join(settings.hadron_folder_path, 'node.info')), 'Genesis and Node info are not in this directory.'
-	node_info = json.loads(open(os.path.join(settings.hadron_folder_path, 'node.info')).read())
+	assert open(os.path.join(settings.lamden_folder_path, 'genesis.json')) and open(os.path.join(settings.lamden_folder_path, 'node.info')), 'Genesis and Node info are not in this directory.'
+	node_info = json.loads(open(os.path.join(settings.lamden_folder_path, 'node.info')).read())
 	
 	#"C:\Program Files\Geth\geth.exe" --rpc --rpcaddr "0.0.0.0" --rpcport "8545" --rpccorsdomain "http://localhost:1010" --rpcapi "web3,eth --networkid 1001201 --datadir ~/ --gasprice 0 console
 
 	process_string = 'geth --identity {}'.format(node_info['identity'])
 	process_string += ' --rpc --rpcaddr "0.0.0.0" --rpcport "{}" --rpccorsdomain "*"'.format(node_info['rpcport']) if node_info['rpc'] else ''
-	process_string += ' --datadir {}'.format(settings.hadron_folder_path)
+	process_string += ' --datadir {}'.format(settings.lamden_folder_path)
 	process_string += ' --port "{}"'.format(node_info['port'])
 	process_string += ' --nodiscover' if node_info['nodiscover'] == True else ''
 	process_string += ' --rpcapi "db,eth,net,web3"'
