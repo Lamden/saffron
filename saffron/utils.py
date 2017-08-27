@@ -110,16 +110,9 @@ def create_node_info(nodeInfoPayload):
 		json.dump(nodeInfoPayload, fp)
 
 def initialize_chain(project_dir, genesisBlockFp):
-<<<<<<< HEAD:hadronutils/utils.py
-	#Chain(project_dir=settings.hadron_folder_path, genesis_block_path=os.path.join(settings.hadron_folder_path, genesisBlockFp))
-	GETH = subprocess.check_output(['which','geth'])
-	print('geth --datadir ' + settings.hadron_folder_path + ' init ' + os.path.join(project_dir, genesisBlockFp))
-	subprocess.Popen(['geth --datadir ' + settings.hadron_folder_path + ' init ' + os.path.join(project_dir, genesisBlockFp)], shell=True, stderr=subprocess.PIPE)
-=======
 	#Chain(project_dir=settings.lamden_folder_path, genesis_block_path=os.path.join(settings.lamden_folder_path, genesisBlockFp))
 	subprocess.Popen(['nohup', 'geth --datadir ' + settings.lamden_folder_path + ' init ' + os.path.join(settings.lamden_folder_path, genesisBlockFp)], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
->>>>>>> 2e03436170c29e8cc15885d083448d7e68406dae:saffron/utils.py
-
+	
 def run_generator():
 	if not check_if_in_project():
 		# create a new chain!
