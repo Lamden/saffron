@@ -194,39 +194,8 @@ def run_generator():
 				break
 			print('\n... Throwing away old data and starting fresh ...\n')
 		
-		# modify if using the --home_dir option or the current working directory (current working directory is the default)
-		run_location, filename = os.path.split(os.path.abspath(__file__))
-		config = configparser.ConfigParser()
-		config.read(os.path.join(run_location, 'config/default.conf'))
-		settings.lamden_home = os.environ.get('LAMDEN_HOME', None) if os.environ.get('LAMDEN_HOME', None) else os.getcwd()
-		settings.lamden_folder_path = os.environ.get('LAMDEN_FOLDER_PATH', None) if os.environ.get('LAMDEN_FOLDER_PATH', None) else join(settings.lamden_home, project_dir)
-		settings.lamden_db_file = os.environ.get('LAMDEN_DB_FILE', None) if os.environ.get('LAMDEN_DB_FILE', None) else join(settings.lamden_folder_path, config.defaults()['lamden_db_file'])
-		
-		print(settings.lamden_home)
-		print(settings.lamden_folder_path)
-		print(settings.lamden_db_file)
-
-		try:
-		    os.makedirs(settings.lamden_folder_path)
-		except OSError as e:
-		    pass
-		#os.makedirs(project_dir, exist_ok=True)
-		#PROJECT_DIR = project_dir
-		#os.chdir(project_dir)
-		print('Directory created in: {}'.format(os.getcwd()))
-
-		create_genesis_block(genesis)
-		print('Genesis block written!')
-
-		create_node_info(node_info)
-		print('Node info written!')
-
-		print('\n=== Initializing Chain... ===\n')
-		initialize_chain(settings.lamden_folder_path, 'genesis.json')
-		print('Chain initialized!')
-
 		user_input = input('Enter password for default account: ')
-		create_account(user_input)
+		new_chain(home_path=project_dir, node_info=node_info, genesis_block=genesis, etherbase_pass=user_input)
 		print('Blockchain generated!')
 
 		print(generate_process_string())
@@ -276,7 +245,7 @@ def new_chain(home_path=None, node_info=None, genesis_block=None, etherbase_pass
 		config = configparser.ConfigParser()
 		config.read(os.path.join(run_location, 'config/default.conf'))
 		settings.lamden_home = os.environ.get('LAMDEN_HOME', None) if os.environ.get('LAMDEN_HOME', None) else os.getcwd()
-		settings.lamden_folder_path = os.environ.get('LAMDEN_FOLDER_PATH', None) if os.environ.get('LAMDEN_FOLDER_PATH', None) else join(settings.lamden_home, project_dir)
+		settings.lamden_folder_path = os.environ.get('LAMDEN_FOLDER_PATH', None) if os.environ.get('LAMDEN_FOLDER_PATH', None) else join(settings.lamden_home, home_path)
 		settings.lamden_db_file = os.environ.get('LAMDEN_DB_FILE', None) if os.environ.get('LAMDEN_DB_FILE', None) else join(settings.lamden_folder_path, config.defaults()['lamden_db_file'])
 
 	if node_info == None:
