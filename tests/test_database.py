@@ -3,7 +3,7 @@
 # from bowie.download import proxies
 import pytest
 import re
-from hadronutils import database
+from saffron import database
 
 def test_tables():
     d = database

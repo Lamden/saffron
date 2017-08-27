@@ -3,7 +3,7 @@
 # from bowie.download import proxies
 import pytest
 import re, json
-from hadronutils import contracts
+from saffron import contracts
 from tempfile import NamedTemporaryFile as ntf
 import uuid
 

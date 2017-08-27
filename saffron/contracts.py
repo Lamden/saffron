@@ -13,9 +13,9 @@ from solc import compile_source, compile_standard
 from jinja2 import Environment
 from jinja2.nodes import Name
 
-from hadronutils.accounts import Account
-from hadronutils.genesis import Chain
-from hadronutils import database
+from saffron.accounts import Account
+from saffron.genesis import Chain
+from saffron import database
 
 DEFAULT_CONTRACT_DIRECTORY = './contracts'
 

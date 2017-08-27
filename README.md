@@ -1,9 +1,9 @@
-# Hadron Ledger
+# Saffron
 #### Better Blockchains for Real World Applications
 
-![Travis CI](https://travis-ci.org/Hadron-Ledger/wrapper.svg?branch=master)
+![Travis CI](https://travis-ci.org/Lamden/saffron.svg?branch=master)
 
-Hadron is a project that aims to make construction and deployment of blockchains easy for developers and enterprises. In it's current form, it relies on the Ethereum technology as a solid base to serve a blockchain with a ton of great features for most use-cases. Here are our goals:
+Saffron is a project that aims to make construction and deployment of blockchains easy for developers and enterprises. In it's current form, it relies on the Ethereum technology as a solid base to serve a blockchain with a ton of great features for most use-cases. Here are our goals:
 
  * Create a Blockchain CLI generator for easy initialization, management, and deployment of private blockchains.
  * Remove transaction costs for using private chains for higher incentive of integration.
@@ -16,8 +16,8 @@ Right now, we have an extremely rudementary generator for Ethereum blockchains a
 ## Give it a go
 
 ```
-virtualenv venv_hadron
-source venv_hadron/bin/activate
+virtualenv venv_saffron
+source venv_saffron/bin/activate
 python setup.py develop
 ```
 
@@ -26,14 +26,14 @@ python setup.py develop
 
 Simple version:
 ```
-cd docker_hadron_ledger_api && gunicorn api:application
+cd docker_saffron_ledger_api && gunicorn api:application
 echo 'pragma solidity ^0.4.11;contract mortal { address owner; function mortal() { owner = msg.sender; } function kill() { if (msg.sender == owner) suicide(owner); } } contract greeter is mortal { string greeting; function greeter(string _greeting) public { greeting = _greeting; } function greet() constant returns (string) { return greeting; } }' | curl --data-binary @- localhost:8000/some_endpoint
 ```
 
 Advanced version:
 ```
 docker pull ethereum/client-go
-docker build -t hadron-ledger-api docker_hadron_ledger_api
+docker build -t saffron-ledger-api docker_saffron_ledger_api
 docker-compose up
 ```
 
@@ -47,8 +47,8 @@ Created the following files:
 #### running the tests
 
 ```
-virtualenv venv_hadron
-source venv_hadron/bin/activate
+virtualenv venv_saffron
+source venv_saffron/bin/activate
 python setup.py develop
 pip install pytest
 py.tests tests
