@@ -60,7 +60,7 @@ def stop():
 @click.option('--name', '-n', required=False, default=None)
 def deploy(filename, name):
 	try:
-		os.chdir(os.path.join(os.getcwd(), 'contracts'))
+		os.chdir(os.path.join(__file__.replace('cli.py',''), 'contracts'))
 	except:
 		raise Exception('Could not find contracts directory. Are you in the project folder?')
 
