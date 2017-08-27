@@ -2,7 +2,7 @@ import pytest, os
 from saffron.accounts import Account
 from saffron.genesis import Chain
 from saffron.database import insert_account
-from saffron.settings import hadron_folder_path
+from saffron.settings import lamden_folder_path
 import uuid
 
 @pytest.fixture
@@ -27,7 +27,7 @@ def test_accounts(chain):
     assert hasattr(a, 'address'), 'No address'
     assert hasattr(a, 'balance'), 'No balance'
     assert hasattr(a, 'name'), 'No name'
-    with open(os.path.join(hadron_folder_path, 'pass.temp')) as f:
+    with open(os.path.join(lamden_folder_path, 'pass.temp')) as f:
         p = f.read()
         assert p == 'testing123'
 
