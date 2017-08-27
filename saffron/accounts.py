@@ -7,9 +7,9 @@ import os
 from web3 import Web3
 from web3.personal import Personal
 from web3.eth import Eth
-from hadronutils.utils import create_account
-from hadronutils.genesis import Chain
-from hadronutils.database import account_exists
+from saffron.utils import create_account
+from saffron.genesis import Chain
+from saffron.database import account_exists
 
 def from_db(name=None, address=None):
 	assert name != None or address != None, 'Supply either a name or an address to query the DB with'
