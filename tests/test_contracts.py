@@ -32,7 +32,7 @@ contract {{contract_name}} {
         _;
     }
  
-    function FixedSupplyToken() {
+    function {{contract_name}}() {
         owner = msg.sender;
         balances[owner] = _totalSupply;
     }
