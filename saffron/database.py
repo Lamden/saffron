@@ -17,6 +17,7 @@ create_contracts = '''
                 )'''
 select_from = 'SELECT * FROM {table} WHERE {name} {address}'.format
 log = logging.getLogger(__file__)
+
 connection = sqlite3.connect(lamden_db_file)
 cursor = connection.cursor()
 
