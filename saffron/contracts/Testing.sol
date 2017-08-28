@@ -22,7 +22,7 @@ contract Something {
         _;
     }
  
-    function FixedSupplyToken() {
+    function Something() {
         owner = msg.sender;
         balances[owner] = _totalSupply;
     }
