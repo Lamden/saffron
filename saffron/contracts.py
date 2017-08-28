@@ -116,7 +116,7 @@ class AB(object):
 		self.web3 = self
 		self.eth.web3.manager = Manager()
 		self.manager = self.manager
-		import pdb;pdb.set_trace()
+		#import pdb;pdb.set_trace()
 
 A = AB()
 
