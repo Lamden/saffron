@@ -3,6 +3,7 @@ import os
 import json
 import pprint
 import random
+import logging
 import argparse
 import subprocess
 from io import BytesIO
@@ -21,6 +22,8 @@ import sqlite3
 
 import pickle
 
+log = logging.getLogger(__file__)
+
 DEFAULT_CONTRACT_DIRECTORY = './contracts'
 
 insert_contract_sql = '''
@@ -34,11 +37,10 @@ insert_contract_sql = '''
 update_contracts_sql = '''
 			UPDATE contracts 
 			SET 
-			address = {}, 
-			instance = {}, 
-			is_deployed = true 
-			WHERE 
-			name = {}'''.format
+			address = ?,
+			instance = ?, 
+			deployed = 'true' 
+			where name = ? ;'''
 
 input_json = '''{"language": "Solidity", "sources": {
 				"{{name}}": {
@@ -65,7 +67,7 @@ def insert_contract(name, abi, bytecode, gas_estimates, method_identifiers, cwd=
 					sqlite3.Binary(methods)))
 
 def update_contract(address, instance, name):
-	Chain().database.cursor.execute(update_contracts_sql(address, instance, name))
+	Chain().database.cursor.execute(update_contracts_sql, (address, pickle.dumps(instance), name))
 
 def get_template_variables(fo):
 	nodes = Environment().parse(fo.read()).body[0].nodes
@@ -96,6 +98,27 @@ def name_is_unique(name):
 def load_sol_file(file=None):
 	assert file, 'No file provided'
 	return file.read()
+
+class Manager(object):
+	def request_blocking(self, *args):
+		print(args)
+		return '0x0000000000000000000000000000000000000000'
+
+# deploy contract
+class AB(object):
+	pass
+	estimateGas = lambda self, x: 9
+	blockNumber = print
+	manager = print
+	getBlock = lambda self, x: {'gasLimit': 10000000, 'x': x}
+	def __init__(self):
+		self.eth = self
+		self.web3 = self
+		self.eth.web3.manager = Manager()
+		self.manager = self.manager
+		import pdb;pdb.set_trace()
+
+A = AB()
 
 
 class Contract():
@@ -137,10 +160,12 @@ class Contract():
 								self.gas_estimates,
 								self.method_identifiers,
 								cwd)
-		# deploy contract
-		self.address = Eth.sendTransaction(transaction={'data' : self.bytecode})
-		self.instance = Eth.contract(self.address)
+
+
+		STUBBED = Eth(A)
+		self.address = STUBBED.sendTransaction(transaction={'data' : self.bytecode})
+		self.instance = STUBBED.contract(self.address)
 		#update the deployed and address to the db and an instance for pulling and interacting with the contract again
-		update_contract(self.address, self.instance, self.name)
+		contract_instance = update_contract(json.dumps(self.address), STUBBED, self.name)
 
 
