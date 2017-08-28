@@ -17,18 +17,19 @@ from saffron.accounts import Account
 from saffron.genesis import Chain
 from saffron import database
 
+import sqlite3
+
 import pickle
 
 DEFAULT_CONTRACT_DIRECTORY = './contracts'
 
 insert_contract_sql = '''
-			INSERT INTO contracts VALUES (
-			name {}, 
-			abi {},
-			metadata {},
-			gas_estimates {},
-			method_identifiers {}
-			)'''.format
+			INSERT INTO contracts (
+			name,
+			abi,
+			metadata,
+			gas_estimates,
+			method_identifiers) VALUES (?,?,?,?,?)'''
 
 update_contracts_sql = '''
 			UPDATE contracts 
@@ -55,12 +56,13 @@ input_json = '''{"language": "Solidity", "sources": {
 
 def insert_contract(name, abi, bytecode, gas_estimates, method_identifiers, cwd=False):
 	#pickle the blobs and add them to the db
-	s = insert_contract_sql(name,
-					abi,
+	gas = pickle.dumps(gas_estimates)
+	methods = pickle.dumps(method_identifiers)
+	return Chain(cwd=cwd).database.cursor.execute(insert_contract_sql, (name,
+					str(abi),
 					bytecode,
-					pickle.dumps(gas_estimates),
-					pickle.dumps(method_identifiers))
-	return Chain(cwd=cwd).database.cursor.execute(s)
+					sqlite3.Binary(gas),
+					sqlite3.Binary(methods)))
 
 def update_contract(address, instance, name):
 	Chain().database.cursor.execute(update_contracts_sql(address, instance, name))
@@ -136,7 +138,7 @@ class Contract():
 								self.method_identifiers,
 								cwd)
 		# deploy contract
-		self.address = Eth.sendTransaction({'data' : self.bytecode})
+		self.address = Eth.sendTransaction(transaction={'data' : self.bytecode})
 		self.instance = Eth.contract(self.address)
 		#update the deployed and address to the db and an instance for pulling and interacting with the contract again
 		update_contract(self.address, self.instance, self.name)
