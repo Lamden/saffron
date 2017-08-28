@@ -11,6 +11,9 @@ contract Something {
     mapping(address => uint256) balances;
  
     mapping(address => mapping (address => uint256)) allowed;
+
+    event Transfer(address indexed _from, address indexed _to, uint _value);
+    event Approval(address indexed _owner, address indexed _spender, uint _value);
  
     modifier onlyOwner() {
         if (msg.sender != owner) {

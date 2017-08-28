@@ -53,14 +53,14 @@ input_json = '''{"language": "Solidity", "sources": {
 			}
 		}'''
 
-def insert_contract(name, abi, bytecode, gas_estimates, method_identifiers):
+def insert_contract(name, abi, bytecode, gas_estimates, method_identifiers, cwd=False):
 	#pickle the blobs and add them to the db
 	s = insert_contract_sql(name,
 					abi,
 					bytecode,
 					pickle.dumps(gas_estimates),
 					pickle.dumps(method_identifiers))
-	return Chain().database.cursor.execute(s)
+	return Chain(cwd=cwd).database.cursor.execute(s)
 
 def update_contract(address, instance, name):
 	Chain().database.cursor.execute(update_contracts_sql(address, instance, name))
@@ -125,7 +125,7 @@ class Contract():
 	def from_chain(self):
 		raise NotImplementedError('TODO')
 
-	def deploy(self):
+	def deploy(self, cwd=False):
 		assert not self.is_deployed, 'This contract already exists on the chain.'
 		assert self.sol, 'No solidity code loaded into this object'
 
@@ -133,7 +133,8 @@ class Contract():
 								self.abi,
 								self.bytecode,
 								self.gas_estimates,
-								self.method_identifiers)
+								self.method_identifiers,
+								cwd)
 		# deploy contract
 		self.address = Eth.sendTransaction({'data' : self.bytecode})
 		self.instance = Eth.contract(self.address)

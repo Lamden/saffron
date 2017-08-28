@@ -6,6 +6,7 @@ import web3
 
 from saffron import database
 from saffron.settings import lamden_home
+from saffron.database import connection, cursor
 
 import subprocess
 
@@ -14,10 +15,15 @@ from saffron.utils import create_genesis_block, initialize_chain, create_account
 class MemoizedChain:
 	class __Chain:
 		def __init__(self, project_dir=None, genesis_block_payload=None, genesis_block_path='genesis.json', cwd=True):
-			self.project_dir = project_dir if cwd else lamden_home
+			self.project_dir = os.getcwd() if cwd else lamden_home
+			
+			connection = sqlite3.connect(os.path.join(os.getcwd(), 'directory.db')) if cwd else sqlite3.connect(lamden_db_file)
+			cursor = connection.cursor()
+			
 			self.genesis_block_path = genesis_block_path
 			database.init_dbs([database.create_contracts, database.create_accounts])
 			self.database = database
+
 			# initialize chain if it doesn't exist already
 			try:
 				open(os.path.join(self.project_dir, genesis_block_path), 'r')
@@ -47,7 +53,7 @@ class MemoizedChain:
 			return False
 
 	instance = None
-	def __init__(self, project_dir=None, genesis_block_payload=None, genesis_block_path='genesis.json', cdw=True):
+	def __init__(self, project_dir=None, genesis_block_payload=None, genesis_block_path='genesis.json', cwd=True):
 		if not Chain.instance:
 			project_dir = lamden_home
 			Chain.instance = Chain.__Chain(project_dir, genesis_block_payload, genesis_block_path)

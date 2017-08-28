@@ -59,15 +59,14 @@ def stop():
 @click.argument('filename', required=False)
 @click.option('--name', '-n', required=False, default=None)
 def deploy(filename, name):
-	try:
-		os.chdir(os.path.join(__file__.replace('cli.py',''), 'contracts'))
-	except:
+	if not os.path.isdir(os.path.join(os.getcwd(), 'contracts')):
 		raise Exception('Could not find contracts directory. Are you in the project folder?')
 
 	if filename == None:
 		print('Deploying all contracts...')
 		# glob it
-		filenames = glob.glob("*.sol")
+		filenames = glob.glob(os.path.join(os.getcwd(), 'contracts/*.sol'))
+		print(filenames)
 		for file in filenames:
 			deploy_contract(file, name)
 	else:
@@ -78,7 +77,7 @@ def deploy_contract(filename, name=None):
 		name = str(uuid.uuid1())
 	contract = Contract(name, filename)
 	try:
-		contract.deploy()
+		contract.deploy(cwd=True)
 	except:
 		raise Exception('Could not deploy contract.')
 

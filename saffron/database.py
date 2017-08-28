@@ -18,7 +18,7 @@ create_contracts = '''
 select_from = 'SELECT * FROM {table} WHERE {name} {address}'.format
 log = logging.getLogger(__file__)
 connection = sqlite3.connect(lamden_db_file)
-cursor = cursor = connection.cursor()
+cursor = connection.cursor()
 
 # graceful initialization tries to create new tables as a test to see if this is a new DB or not
 def init_dbs(sqls):
