@@ -22,6 +22,14 @@ python setup.py develop
 ```
 
 ## API Deployment
+
+### deploying the developer services
+
+```
+# Install docker for your platform, and then.
+docker-compose up
+```
+
 #### You can try out the API by using the following bash commands:
 
 Simple version:
