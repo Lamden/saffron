@@ -2,6 +2,15 @@ from setuptools import setup, find_packages
 
 
 setup(name='saffron',
+      packages = ['saffron'],
+      version = '0.1',
+      description = 'blockchain artifact development tools',
+      author = 'Lamden',
+      author_email = 'james@lamden.io',
+      url = 'https://github.com/Lamden/saffron',
+      download_url = 'https://github.com/Lamden/saffron/archive/0.1.tar.gz',
+      keywords = ['testing', 'logging', 'cryptocurrency', 'smartcontracts', 'ethereum', 'dashboards'],
+      classifiers = [],
       install_requires=[
           'werkzeug',
           'gevent>=1.1.0',
@@ -25,10 +34,8 @@ setup(name='saffron',
               'default.conf',
           ],
           # 'hadron.node': [
-          #     'static/css/*.css',
-          #     'static/images/*.png',
-          #     'static/js/*.js',
           #     'templates/*.html',
           # ],
       },
-      zip_safe=False)
+      zip_safe=False
+      )
