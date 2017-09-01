@@ -8,7 +8,13 @@ Welcome to saffron's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Table of Contents
+   What is saffron
+   Why saffron
+   Installation
+   Quick Start
+   Deploying a Contract
+   Contributing
 
 ::
     saffron cli
