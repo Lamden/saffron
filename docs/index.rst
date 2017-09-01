@@ -12,6 +12,16 @@ Welcome to saffron's documentation!
 
    intro
 
+.. toctree::
+   :maxdepth: 2
+
+   modules.rst
+
+.. toctree::
+   :maxdepth: 2
+
+   saffron.rst
+
 
 ::
     saffron cli
