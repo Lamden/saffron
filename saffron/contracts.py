@@ -3,6 +3,7 @@ import os
 import json
 import pprint
 import random
+import logging
 import argparse
 import subprocess
 from io import BytesIO
@@ -17,25 +18,29 @@ from saffron.accounts import Account
 from saffron.genesis import Chain
 from saffron import database
 
+import sqlite3
+
+import pickle
+
+log = logging.getLogger(__file__)
+
 DEFAULT_CONTRACT_DIRECTORY = './contracts'
 
-save_contract_sql = '''
-			INSERT INTO contracts VALUES (
-			name {}, 
-			abi {},
-			metadata {},
-			gas_estimates {},
-			method_identifiers {}
-			)'''.format
+insert_contract_sql = '''
+			INSERT INTO contracts (
+			name,
+			abi,
+			metadata,
+			gas_estimates,
+			method_identifiers) VALUES (?,?,?,?,?)'''
 
 update_contracts_sql = '''
 			UPDATE contracts 
 			SET 
-			address = {}, 
-			instance = {}, 
-			is_deployed = true 
-			WHERE 
-			name = {}'''.format
+			address = ?,
+			instance = ?, 
+			deployed = 'true' 
+			where name = ? ;'''
 
 input_json = '''{"language": "Solidity", "sources": {
 				"{{name}}": {
@@ -51,17 +56,18 @@ input_json = '''{"language": "Solidity", "sources": {
 			}
 		}'''
 
-def insert_contract(name, abi, bytecode, gas_estimates, method_identifiers):
+def insert_contract(name, abi, bytecode, gas_estimates, method_identifiers, cwd=False):
 	#pickle the blobs and add them to the db
-	s = insert_contract_sql(name,
-					abi,
+	gas = pickle.dumps(gas_estimates)
+	methods = pickle.dumps(method_identifiers)
+	return Chain(cwd=cwd).database.cursor.execute(insert_contract_sql, (name,
+					str(abi),
 					bytecode,
-					pickle.dumps(gas_estimates),
-					pickle.dumps(method_identifiers))
-	return Chain().database.cursor.execute(s)
+					sqlite3.Binary(gas),
+					sqlite3.Binary(methods)))
 
 def update_contract(address, instance, name):
-	Chain().database.cursor.execute(update_contracts_sql(address, instance, name))
+	Chain().database.cursor.execute(update_contracts_sql, (address, pickle.dumps(instance), name))
 
 def get_template_variables(fo):
 	nodes = Environment().parse(fo.read()).body[0].nodes
@@ -93,6 +99,27 @@ def load_sol_file(file=None):
 	assert file, 'No file provided'
 	return file.read()
 
+class Manager(object):
+	def request_blocking(self, *args):
+		print(args)
+		return '0x0000000000000000000000000000000000000000'
+
+# deploy contract
+class AB(object):
+	pass
+	estimateGas = lambda self, x: 9
+	blockNumber = print
+	manager = print
+	getBlock = lambda self, x: {'gasLimit': 10000000, 'x': x}
+	def __init__(self):
+		self.eth = self
+		self.web3 = self
+		self.eth.web3.manager = Manager()
+		self.manager = self.manager
+		#import pdb;pdb.set_trace()
+
+A = AB()
+
 
 class Contract():
 	def __init__(self, name, sol_file_path):
@@ -110,7 +137,7 @@ class Contract():
 		self.abi = self.contracts['abi']
 		self.metadata = self.contracts['metadata']
 		self.bytecode = self.contracts['evm']['deployedBytecode']['object']
-		self.gas_estimate = self.contracts['evm']['gasEstimates']
+		self.gas_estimates = self.contracts['evm']['gasEstimates']
 		self.method_identifiers = self.contracts['evm']['methodIdentifiers']
 		
 		# set in deploy
@@ -123,19 +150,22 @@ class Contract():
 	def from_chain(self):
 		raise NotImplementedError('TODO')
 
-	def deploy(self):
+	def deploy(self, cwd=False):
 		assert not self.is_deployed, 'This contract already exists on the chain.'
 		assert self.sol, 'No solidity code loaded into this object'
 
-		response = save_contract(self.name,
+		response = insert_contract(self.name,
 								self.abi,
 								self.bytecode,
 								self.gas_estimates,
-								self.method_identifiers)
-		# deploy contract
-		self.address = Eth.sendTransaction({'data' : self.bytecode})
-		self.instance = Eth.contract(self.address)
+								self.method_identifiers,
+								cwd)
+
+
+		STUBBED = Eth(A)
+		self.address = STUBBED.sendTransaction(transaction={'data' : self.bytecode})
+		self.instance = STUBBED.contract(self.address)
 		#update the deployed and address to the db and an instance for pulling and interacting with the contract again
-		update_contract(self.address, self.instance, self.name)
+		contract_instance = update_contract(json.dumps(self.address), STUBBED, self.name)
 
 
