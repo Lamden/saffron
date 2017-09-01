@@ -62,3 +62,7 @@ python setup.py develop
 pip install pytest
 py.tests tests
 ```
+
+## Documentation
+
+ - http://saffron.readthedocs.io/en/latest/
