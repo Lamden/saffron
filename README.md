@@ -17,7 +17,7 @@ Right now, we have an extremely rudementary generator for Ethereum blockchains a
 ## Give it a go
 
 ```
-virtualenv venv_saffron
+python3 -m virtualenv venv_saffron3
 source venv_saffron/bin/activate
 python setup.py develop
 ```
