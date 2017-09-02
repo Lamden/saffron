@@ -17,9 +17,16 @@ Right now, we have an extremely rudementary generator for Ethereum blockchains a
 ## Give it a go
 
 ```
-python3 -m virtualenv venv_saffron3
+virtualenv -p python3 venv3_saffron
 source venv_saffron/bin/activate
-python setup.py develop
+python3 setup.py develop
+
+mkdir saffron
+export LAMDEN_HOME=$(pwd)/saffron
+export LAMDEN_FOLDER_PATH=$(pwd)
+export LAMDEN_DB_FILE=$(pwd)/saffron/saffron.db
+
+saffron --help
 ```
 
 ## API Deployment

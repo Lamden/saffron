@@ -50,7 +50,7 @@ setup(name='saffron-cli',
           'saffron.': [
               'default.conf',
           ],
-          # 'hadron.node': [
+          # 'saffron.node': [
           #     'templates/*.html',
           # ],
       },

@@ -8,15 +8,15 @@ import uuid
 """
 	workflow is...
 
-	hadron init
-	
+	saffron init
+
 	create a new account
 		=> creates a new account object
 		=> adds it to the database
 		=> adds it to the blockchain
 
 	query accounts from database
-	
+
 	query accounts from blockchain
 
 	query specific address (by name in db to blockchain)
