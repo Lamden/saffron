@@ -1,3 +1,0 @@
-[console_scripts]
-hadron = saffron.cli:cli
-
