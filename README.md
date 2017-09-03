@@ -2,7 +2,8 @@
 # Saffron
 #### Better Blockchains for Real World Applications
 
-![Travis CI](https://travis-ci.org/Lamden/saffron.svg?branch=master) ![readthedocs](https://readthedocs.org/projects/saffron/badge/?version=latest)
+![Travis CI](https://travis-ci.org/Lamden/saffron.svg?branch=master)
+
 
 Saffron is a project that aims to make construction and deployment of blockchains easy for developers and enterprises. In it's current form, it relies on the Ethereum technology as a solid base to serve a blockchain with a ton of great features for most use-cases. Here are our goals:
 
@@ -37,13 +38,6 @@ Simple version:
 ```
 cd docker_saffron_ledger_api && gunicorn api:application
 echo 'pragma solidity ^0.4.11;contract mortal { address owner; function mortal() { owner = msg.sender; } function kill() { if (msg.sender == owner) suicide(owner); } } contract greeter is mortal { string greeting; function greeter(string _greeting) public { greeting = _greeting; } function greet() constant returns (string) { return greeting; } }' | curl --data-binary @- localhost:8000/some_endpoint
-```
-
-Advanced version:
-```
-docker pull ethereum/client-go
-docker build -t saffron-ledger-api docker_saffron_ledger_api
-docker-compose up
 ```
 
 Example:
