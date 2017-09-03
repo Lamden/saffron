@@ -81,7 +81,7 @@ def create_genesis_block(genesisBlockPayload):
 	'parentHash',
 	'timestamp'] \
 	for x in list(genesisBlockPayload.keys()))
-	
+
 	assert all(x in \
 	['chainId',
 	'homesteadBlock',
@@ -118,7 +118,8 @@ def run_generator():
 		# create a new chain!
 		print('=== Project Name ===')
 		project_dir = input('Name your new Lamden project: ')
-
+		if project_dir:
+			settings.lamden_folder_path = project_dir
 		node_info = NODE_INFO_TEMPLATE
 		while True:
 			print('\n=== Network Settings ===')
@@ -185,7 +186,7 @@ def run_generator():
 
 			genesis['parentHash'] = generate_hex_string(64)
 			print('Random parent hash generated as {}'.format(genesis['parentHash']))
-			
+
 			print('\n=== Generating Genesis Block ===')
 			print('Does the following payload look correct?\n')
 			pprint.pprint(genesis)
@@ -193,7 +194,7 @@ def run_generator():
 			if user_input is 'y':
 				break
 			print('\n... Throwing away old data and starting fresh ...\n')
-		
+
 		user_input = input('Enter password for default account: ')
 		new_chain(home_path=project_dir, node_info=node_info, genesis_block=genesis, etherbase_pass=user_input)
 		print('Blockchain generated!')
@@ -224,7 +225,7 @@ def create_account(password):
 def generate_process_string():
 	assert open(os.path.join(settings.lamden_folder_path, 'genesis.json')) and open(os.path.join(settings.lamden_folder_path, 'node.info')), 'Genesis and Node info are not in this directory.'
 	node_info = json.loads(open(os.path.join(settings.lamden_folder_path, 'node.info')).read())
-	
+
 	#"C:\Program Files\Geth\geth.exe" --rpc --rpcaddr "0.0.0.0" --rpcport "8545" --rpccorsdomain "http://localhost:1010" --rpcapi "web3,eth --networkid 1001201 --datadir ~/ --gasprice 0 console
 
 	process_string = 'geth --identity {}'.format(node_info['identity'])

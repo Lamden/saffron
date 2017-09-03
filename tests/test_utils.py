@@ -28,7 +28,3 @@ def test_run_generator():
 def test_create_account():
     utils.create_account
     pass
-
-def test_close_if_timeout():
-    utils.close_if_timeout
-    pass
