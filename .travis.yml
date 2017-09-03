@@ -8,3 +8,6 @@ before_install:
   - sudo apt-get install -y ethereum solc
 install: "python setup.py develop"
 script: pytest tests
+notifications:
+  webhooks:
+    - https://discordapp.com/api/webhooks/353975120877846528/lhnkV1Pp4BsKXA4Ja9AzaUtVdAyBQJ4_QQHUfSBNeLVsWtfVFw3m-10p8uzfcL4aNTQX
