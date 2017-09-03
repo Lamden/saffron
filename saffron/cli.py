@@ -21,7 +21,7 @@ def cli():
 def init():
 	utils.run_generator()
 
-@cli.command()
+@cli.command('start', short_help='start a chain')
 def start():
 	genesis_payload = None
 	try:
@@ -44,7 +44,7 @@ def start():
 	with open('.pid', 'w') as f:
 		f.write(str(proc.pid))
 
-@cli.command()
+@cli.command('stop', short_help='stop the chain')
 def stop():
 	try:
 		BASH = subprocess.check_output(['which','bash'])

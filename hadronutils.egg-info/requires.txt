@@ -1,9 +1,0 @@
-werkzeug
-gevent>=1.1.0
-gunicorn
-web3
-jinja2
-py-solc
-pytest
-py-solc
-click
