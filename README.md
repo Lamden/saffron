@@ -14,7 +14,7 @@ Saffron is a project that aims to make construction and deployment of blockchain
  * Create private chain to private chain communication via a main chain 'router' that is free to transact upon.
 
 #### Where are we at so far?
-Right now, we have an extremely rudementary generator for Ethereum blockchains and an API that treats smart contract interaction like API calls.
+Right now, we have a simple MVP, which generates contracts for Ethereum blockchains and an API that treats smart contract interaction like API calls. As well as a suite of opensource and optionally deployable admin dashboards.
 
 ## Give it a go
 
