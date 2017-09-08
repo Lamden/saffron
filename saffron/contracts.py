@@ -17,7 +17,6 @@ from jinja2.nodes import Name
 from saffron.accounts import Account
 from saffron.genesis import Chain
 from saffron import database
-
 import sqlite3
 
 import pickle
@@ -26,48 +25,8 @@ log = logging.getLogger(__file__)
 
 DEFAULT_CONTRACT_DIRECTORY = './contracts'
 
-insert_contract_sql = '''
-			INSERT INTO contracts (
-			name,
-			abi,
-			metadata,
-			gas_estimates,
-			method_identifiers) VALUES (?,?,?,?,?)'''
-
-update_contracts_sql = '''
-			UPDATE contracts
-			SET
-			address = ?,
-			instance = ?,
-			deployed = 'true'
-			where name = ? ;'''
-
-input_json = '''{"language": "Solidity", "sources": {
-				"{{name}}": {
-					"content": {{sol}}
-				}
-			},
-			"settings": {
-				"outputSelection": {
-					"*": {
-						"*": [ "metadata", "evm.bytecode", "abi", "evm.bytecode.opcodes", "evm.gasEstimates", "evm.methodIdentifiers" ]
-					}
-				}
-			}
-		}'''
-
-def insert_contract(name, abi, bytecode, gas_estimates, method_identifiers, cwd=False):
-	#pickle the blobs and add them to the db
-	gas = pickle.dumps(gas_estimates)
-	methods = pickle.dumps(method_identifiers)
-	return Chain(cwd=cwd).database.cursor.execute(insert_contract_sql, (name,
-					str(abi),
-					bytecode,
-					sqlite3.Binary(gas),
-					sqlite3.Binary(methods)))
-
 def update_contract(address, instance, name):
-	Chain().database.cursor.execute(update_contracts_sql, (address, pickle.dumps(instance), name))
+	database.update_contract(address, instance, name)
 
 def get_template_variables(fo):
 	nodes = Environment().parse(fo.read()).body[0].nodes
@@ -99,27 +58,6 @@ def load_sol_file(file=None):
 	assert file, 'No file provided'
 	return file.read()
 
-# class Manager(object):
-# 	def request_blocking(self, *args):
-# 		print(args)
-# 		return '0x0000000000000000000000000000000000000000'
-
-# # deploy contract
-# class AB(object):
-# 	pass
-# 	estimateGas = lambda self, x: 9
-# 	blockNumber = print
-# 	manager = print
-# 	getBlock = lambda self, x: {'gasLimit': 10000000, 'x': x}
-# 	def __init__(self):
-# 		self.eth = self
-# 		self.web3 = self
-# 		self.eth.web3.manager = Manager()
-# 		self.manager = self.manager
-# 		#import pdb;pdb.set_trace()
-
-# A = AB()
-
 
 class Contract(Contract):
 	def __init__(self, name, sol_file_path):
@@ -131,7 +69,7 @@ class Contract(Contract):
 		self.is_deployed = None
 		with open(sol_file_path) as f:
 			self.sol = load_sol_file(f)
-		self.template_json = Environment().from_string(input_json).render(name=self.name, sol=json.dumps(self.sol))
+		self.template_json = Environment().from_string(database.input_json).render(name=self.name, sol=json.dumps(self.sol))
 		self.output_json = compile_standard(json.loads(self.template_json))
 		self.compiled_name = list(self.output_json['contracts'][self.name].keys())[0]
 		self.contracts = self.output_json['contracts'][self.name][self.compiled_name]
@@ -144,7 +82,9 @@ class Contract(Contract):
 		# set in deploy
 		self.address = None
 		self.instance = None
+		# TODO : account creation on saffron init
 		self.defaulAccount = '0xabaa886e5c11c54e76d250efd70143fe0f959530'
+		# TODO : unlock ^
 		# self.web3.personal.unlockAccount(self.defaulAccount, 'password');
 
 	def __str__(self):
@@ -156,15 +96,12 @@ class Contract(Contract):
 	def deploy(self, cwd=False):
 		assert not self.is_deployed, 'This contract already exists on the chain.'
 		assert self.sol, 'No solidity code loaded into this object'
-
-		response = insert_contract(self.name,
-								self.abi,
-								self.bytecode,
-								self.gas_estimates,
-								self.method_identifiers,
-								cwd)
-
-		# ok = web3.eth.Eth(web3)
+		response = database.insert_contract(self.name,
+											self.abi,
+											self.bytecode,
+											self.gas_estimates,
+											self.method_identifiers,
+											cwd)
 		self.address = self.web3.eth.sendTransaction(transaction={'data' : '0x' + self.bytecode, 'from': self.defaulAccount, 'gaslimit': 30000})
 		self.instance = self.web3.eth.contract(self.address)
 		#update the deployed and address to the db and an instance for pulling and interacting with the contract again

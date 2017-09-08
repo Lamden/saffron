@@ -14,18 +14,15 @@ from saffron.utils import create_genesis_block, initialize_chain, create_account
 class MemoizedChain:
 	class __Chain:
 		def __init__(self, project_dir=None, genesis_block_payload=None, genesis_block_path='genesis.json', cwd=True):
-			self.project_dir = os.getcwd() if cwd else lamden_home
-
 			database.connection = sqlite3.connect(os.path.join(os.getcwd(), 'directory.db')) if cwd else sqlite3.connect(lamden_db_file)
 			database.cursor = database.connection.cursor()
 
 			self.genesis_block_path = genesis_block_path
-			database.init_dbs([database.create_contracts, database.create_accounts])
 			self.database = database
 
 			# initialize chain if it doesn't exist already
 			try:
-				open(os.path.join(self.project_dir, genesis_block_path), 'r')
+				open(os.path.join(os.environ['LAMDEN_FOLDER_PATH'], genesis_block_path), 'r')
 			except:
 				assert genesis_block_payload, 'No payload given'
 				# if genesis_block_payload == None:
