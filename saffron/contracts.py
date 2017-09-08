@@ -8,8 +8,8 @@ import argparse
 import subprocess
 from io import BytesIO
 
-import web3
-from web3.eth import Eth
+from web3 import Web3, HTTPProvider
+from web3.eth import Eth, Contract
 from solc import compile_source, compile_standard
 from jinja2 import Environment
 from jinja2.nodes import Name
@@ -35,11 +35,11 @@ insert_contract_sql = '''
 			method_identifiers) VALUES (?,?,?,?,?)'''
 
 update_contracts_sql = '''
-			UPDATE contracts 
-			SET 
+			UPDATE contracts
+			SET
 			address = ?,
-			instance = ?, 
-			deployed = 'true' 
+			instance = ?,
+			deployed = 'true'
 			where name = ? ;'''
 
 input_json = '''{"language": "Solidity", "sources": {
@@ -99,33 +99,34 @@ def load_sol_file(file=None):
 	assert file, 'No file provided'
 	return file.read()
 
-class Manager(object):
-	def request_blocking(self, *args):
-		print(args)
-		return '0x0000000000000000000000000000000000000000'
+# class Manager(object):
+# 	def request_blocking(self, *args):
+# 		print(args)
+# 		return '0x0000000000000000000000000000000000000000'
 
-# deploy contract
-class AB(object):
-	pass
-	estimateGas = lambda self, x: 9
-	blockNumber = print
-	manager = print
-	getBlock = lambda self, x: {'gasLimit': 10000000, 'x': x}
-	def __init__(self):
-		self.eth = self
-		self.web3 = self
-		self.eth.web3.manager = Manager()
-		self.manager = self.manager
-		#import pdb;pdb.set_trace()
+# # deploy contract
+# class AB(object):
+# 	pass
+# 	estimateGas = lambda self, x: 9
+# 	blockNumber = print
+# 	manager = print
+# 	getBlock = lambda self, x: {'gasLimit': 10000000, 'x': x}
+# 	def __init__(self):
+# 		self.eth = self
+# 		self.web3 = self
+# 		self.eth.web3.manager = Manager()
+# 		self.manager = self.manager
+# 		#import pdb;pdb.set_trace()
 
-A = AB()
+# A = AB()
 
 
-class Contract():
+class Contract(Contract):
 	def __init__(self, name, sol_file_path):
 		assert name != None, 'A name identifier must be provided to create a new contract instance.'
 		_name, _address = database.contract_exists(name=name)
 		assert _name is None and _address is None
+		self.web3 = Web3(Web3.HTTPProvider("http://127.0.0.1:8000"))
 		self.name = name
 		self.is_deployed = None
 		with open(sol_file_path) as f:
@@ -139,10 +140,12 @@ class Contract():
 		self.bytecode = self.contracts['evm']['deployedBytecode']['object']
 		self.gas_estimates = self.contracts['evm']['gasEstimates']
 		self.method_identifiers = self.contracts['evm']['methodIdentifiers']
-		
+
 		# set in deploy
 		self.address = None
 		self.instance = None
+		self.defaulAccount = '0xabaa886e5c11c54e76d250efd70143fe0f959530'
+		# self.web3.personal.unlockAccount(self.defaulAccount, 'password');
 
 	def __str__(self):
 		return 'Contract {}, {}'.format(self.address if self.address else 'None', self.name if self.name else 'None')
@@ -161,11 +164,10 @@ class Contract():
 								self.method_identifiers,
 								cwd)
 
-
-		STUBBED = Eth(A)
-		self.address = STUBBED.sendTransaction(transaction={'data' : self.bytecode})
-		self.instance = STUBBED.contract(self.address)
+		# ok = web3.eth.Eth(web3)
+		self.address = self.web3.eth.sendTransaction(transaction={'data' : '0x' + self.bytecode, 'from': self.defaulAccount, 'gaslimit': 30000})
+		self.instance = self.web3.eth.contract(self.address)
 		#update the deployed and address to the db and an instance for pulling and interacting with the contract again
-		contract_instance = update_contract(json.dumps(self.address), STUBBED, self.name)
+		contract_instance = update_contract(json.dumps(self.address), self.method_identifiers, self.name)
 
 

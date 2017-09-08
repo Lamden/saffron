@@ -15,10 +15,10 @@ class MemoizedChain:
 	class __Chain:
 		def __init__(self, project_dir=None, genesis_block_payload=None, genesis_block_path='genesis.json', cwd=True):
 			self.project_dir = os.getcwd() if cwd else lamden_home
-			
+
 			database.connection = sqlite3.connect(os.path.join(os.getcwd(), 'directory.db')) if cwd else sqlite3.connect(lamden_db_file)
 			database.cursor = database.connection.cursor()
-			
+
 			self.genesis_block_path = genesis_block_path
 			database.init_dbs([database.create_contracts, database.create_accounts])
 			self.database = database
@@ -39,7 +39,7 @@ class MemoizedChain:
 			#pid = os.spawnlp(os.P_NOWAITO, GETH.strip(), 'geth','--datadir',self.project_dir, '--etherbase','0', '&')
 			geth_string = generate_process_string()
 			print(geth_string)
-			proc = subprocess.Popen(['nohup', GETH.strip(), geth_string])
+			proc = subprocess.Popen(['nohup', GETH.strip()] + geth_string.split())
 			return proc
 
 		def stop(self):
