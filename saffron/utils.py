@@ -196,7 +196,11 @@ def run_generator():
 			print('\n... Throwing away old data and starting fresh ...\n')
 
 		user_input = input('Enter password for default account: ')
-		new_chain(home_path=project_dir, node_info=node_info, genesis_block=genesis, etherbase_pass=user_input)
+		try:
+			new_chain(home_path=project_dir, node_info=node_info, genesis_block=genesis, etherbase_pass=user_input)
+		except Exception as e:
+			print(e)
+			pass
 		print('Blockchain generated!')
 
 		print(generate_process_string())
@@ -228,13 +232,13 @@ def generate_process_string():
 
 	#"C:\Program Files\Geth\geth.exe" --rpc --rpcaddr "0.0.0.0" --rpcport "8545" --rpccorsdomain "http://localhost:1010" --rpcapi "web3,eth --networkid 1001201 --datadir ~/ --gasprice 0 console
 
-	process_string = 'geth --identity {}'.format(node_info['identity'])
-	process_string += ' --rpc --rpcaddr "0.0.0.0" --rpcport "{}" --rpccorsdomain "*"'.format(node_info['rpcport']) if node_info['rpc'] else ''
+	process_string = ''
+	process_string += ' --rpc --rpcaddr 0.0.0.0 --rpcport {} --rpccorsdomain "*"'.format(node_info['rpcport']) if node_info['rpc'] else ''
 	process_string += ' --datadir {}'.format(settings.lamden_folder_path)
-	process_string += ' --port "{}"'.format(node_info['port'])
+	process_string += ' --port {}'.format(node_info['port'])
 	process_string += ' --nodiscover' if node_info['nodiscover'] == True else ''
 	process_string += ' --rpcapi "db,eth,net,web3"'
-	process_string += ' --networkid "{}"'.format(node_info['networkid'])
+	process_string += ' --networkid {}'.format(node_info['networkid'])
 	process_string += ' --gasprice 0 --mine'
 	return process_string
 
@@ -257,10 +261,15 @@ def new_chain(home_path=None, node_info=None, genesis_block=None, etherbase_pass
 
 	if genesis_block == None:
 		genesis_block = GENESIS_BLOCK_TEMPLATE
-
 	try:
 		os.makedirs(settings.lamden_folder_path)
+	except:
+		pass
+	try:
 		os.makedirs(join(settings.lamden_folder_path, 'contracts'))
+	except:
+		pass
+	try:
 		create_genesis_block(genesis_block)
 		create_node_info(node_info)
 		initialize_chain(settings.lamden_folder_path, 'genesis.json')
