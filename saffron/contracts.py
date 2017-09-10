@@ -8,6 +8,7 @@ import argparse
 import subprocess
 from io import BytesIO
 
+import web3
 from web3 import Web3, HTTPProvider
 from web3.eth import Eth, Contract
 from solc import compile_source, compile_standard
@@ -20,13 +21,14 @@ from saffron import database
 import sqlite3
 
 import pickle
+import getpass
 
 log = logging.getLogger(__file__)
 
 DEFAULT_CONTRACT_DIRECTORY = './contracts'
 
 def update_contract(address, instance, name):
-	database.update_contract(address, instance, name)
+	return database.update_contract(address, instance, name)
 
 def get_template_variables(fo):
 	nodes = Environment().parse(fo.read()).body[0].nodes
@@ -102,9 +104,16 @@ class Contract(Contract):
 											self.gas_estimates,
 											self.method_identifiers,
 											cwd)
-		self.address = self.web3.eth.sendTransaction(transaction={'data' : '0x' + self.bytecode, 'from': self.defaulAccount, 'gaslimit': 30000})
-		self.instance = self.web3.eth.contract(self.address)
+		okay = web3.personal.Personal(self.web3)
+		options = 'Unlock: \n' + '\n'.join([' '.join([str(i),':',x]) for i, x in enumerate(okay.listAccounts)]) + '\n'
+		self.defaultAccount = okay.listAccounts[int(input(options))]
+		result = okay.unlockAccount(self.defaultAccount, getpass.getpass('\nPassword:'), 5000)
+		if result:
+			self.address = self.web3.eth.sendTransaction(transaction={'data' : '0x' + self.bytecode, 'from': self.defaulAccount, 'gaslimit': 30000})
+			self.instance = self.web3.eth.contract(self.address)
+		else:
+			raise Exepction('unable to unlock account')
 		#update the deployed and address to the db and an instance for pulling and interacting with the contract again
-		contract_instance = update_contract(json.dumps(self.address), self.method_identifiers, self.name)
+		return update_contract(json.dumps(self.address), self.method_identifiers, self.name)
 
 

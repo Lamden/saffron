@@ -11,6 +11,7 @@ lamden_db_file = os.environ.get('LAMDEN_DB_FILE', None) if os.environ.get('LAMDE
 PASSWORD_FILE_NAME = '.pass'
 PROCESS_FILE_NAME = '.pid'
 GENESIS_FILE_NAME = 'genesis.json'
+project_genesis = os.path.join(lamden_folder_path, 'genesis.json')
 
 try:
     os.makedirs(lamden_folder_path)

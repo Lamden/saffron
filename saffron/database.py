@@ -87,10 +87,11 @@ def update_contract(address, instance, name):
     assert instance
     assert name
     result = cursor.execute(update_contracts_sql, (address, pickle.dumps(instance), name))
-    connection.commit()
-    return result
+    return [x for x in cursor.execute('select * from contracts where address=?', (address, ))]
 
-def insert_contract(name, abi, bytecode, gas_estimates, method_identifiers, cwd):
+def insert_contract(name: str, abi, bytecode: str, gas_estimates, method_identifiers, cwd):
+    '''insert_contract into the localdb, also converts the type
+    '''
     assert name
     assert abi
     assert bytecode

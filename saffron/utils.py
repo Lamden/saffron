@@ -38,7 +38,7 @@ NODE_INFO_TEMPLATE = {
 	'port' : 30303,
 	'nodiscover' : True,
 	'ipcapi' : 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3',
-	'rpcapi' : 'db,eth,net,web3',
+	'rpcapi' : 'db,eth,net,web3,personal,web3',
 	'autodag' : True,
 	'networkid' : 1900
 }
@@ -113,13 +113,10 @@ def initialize_chain(project_dir, genesisBlockFp):
 	#Chain(project_dir=settings.lamden_folder_path, genesis_block_path=os.path.join(settings.lamden_folder_path, genesisBlockFp))
 	subprocess.Popen(['nohup', 'geth --datadir ' + settings.lamden_folder_path + ' init ' + os.path.join(settings.lamden_folder_path, genesisBlockFp)], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-def run_generator():
+def run_generator(chain_name):
 	if not check_if_in_project():
 		# create a new chain!
-		print('=== Project Name ===')
-		project_dir = input('Name your new Lamden project: ')
-		if project_dir:
-			settings.lamden_folder_path = project_dir
+		# print('=== config {} ==='.format(chain_name))
 		node_info = NODE_INFO_TEMPLATE
 		while True:
 			print('\n=== Network Settings ===')
@@ -197,7 +194,9 @@ def run_generator():
 
 		user_input = input('Enter password for default account: ')
 		try:
-			new_chain(home_path=project_dir, node_info=node_info, genesis_block=genesis, etherbase_pass=user_input)
+			print(settings.lamden_folder_path)
+			import pdb;pdb.set_trace()
+			new_chain(home_path=settings.lamden_folder_path, node_info=node_info, genesis_block=genesis, etherbase_pass=user_input)
 		except Exception as e:
 			print(e)
 			pass
@@ -237,7 +236,7 @@ def generate_process_string():
 	process_string += ' --datadir {}'.format(settings.lamden_folder_path)
 	process_string += ' --port {}'.format(node_info['port'])
 	process_string += ' --nodiscover' if node_info['nodiscover'] == True else ''
-	process_string += ' --rpcapi "db,eth,net,web3"'
+	process_string += ' --rpcapi "{}"'.format(node_info['rpcapi'])
 	process_string += ' --networkid {}'.format(node_info['networkid'])
 	process_string += ' --gasprice 0 --mine'
 	return process_string
