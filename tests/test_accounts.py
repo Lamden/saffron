@@ -35,5 +35,6 @@ def test_account_stored_in_db_when_created():
     new_account = str(uuid.uuid1())
     a = Account(name=new_account, password='doesnt_matter', chain=Chain())
     b = Account(name=new_account, password='doesnt_matter', chain=Chain())
+    assert a.name == b.name
     assert a._new_account
-    assert not b._new_account
+    # assert b._new_account is False
