@@ -7,7 +7,7 @@ before_install:
   - sudo apt-get update
   - sudo apt-get install -y ethereum solc
 install: "python setup.py develop"
-script: pytest tests
+script: LAMDEN_FOLDER_PATH=. pytest tests
 notifications:
   webhooks:
     - https://lamden-discord-travisci.herokuapp.com/webhook/

@@ -30,11 +30,7 @@ def init(chain_name):
 		# lamden_home
 		'/Users/jmunsch/.lamden'
 	'''
-	src_string = '''#! /bin/bash
-export LAMDEN_HOME='{LAMDEN_HOME}'
-export LAMDEN_FOLDER_PATH='{LAMDEN_FOLDER_PATH}'
-export LAMDEN_DB_FILE='{LAMDEN_DB_FILE}'
-'''.format
+
 	new_path = os.path.join(settings.lamden_home, chain_name)
 	try:
 		os.makedirs(new_path)
@@ -45,11 +41,13 @@ export LAMDEN_DB_FILE='{LAMDEN_DB_FILE}'
 	db_filename = os.path.join(chain_name, '{}.sqlite3'.format(chain_name))
 	settings.lamden_folder_path = new_path
 	settings.lamden_db_file = settings.lamden_db_file.replace('lamden-default/lamden-default.sqlite3', db_filename)
-	env = os.path.join(settings.lamden_folder_path, '{}.source'.format(chain_name))
-	s = src_string(LAMDEN_HOME=settings.lamden_home,
+	env = settings.env_source(chain_name)
+	s = settings.src_string(LAMDEN_HOME=settings.lamden_home,
 			LAMDEN_FOLDER_PATH=settings.lamden_folder_path,
-			LAMDEN_DB_FILE=settings.lamden_db_file)
-	with open(env,'wb') as f:
+			LAMDEN_DB_FILE=settings.lamden_db_file,
+			NODE_INFO_JSON=settings.node_info_json(chain_name),
+			PROJECT_GENESIS=settings.project_genesis(chain_name))
+	with open(env, 'wb') as f:
 		f.write(s.encode('utf-8'))
 	print('\n############### project dir ###########\n')
 	print('New Source File : {}\n'.format(os.path.expanduser('~/.lamden/{c}/{c}.source'.format(c=chain_name))))
@@ -58,22 +56,23 @@ export LAMDEN_DB_FILE='{LAMDEN_DB_FILE}'
 	print('###########\n')
 	utils.run_generator(chain_name)
 
-@cli.command('start', short_help='starts a chain from cwd genesis.json')
-def start():
+@cli.command('start', short_help='starts a chain based on ENV for genesis location')
+@click.argument('chain_name', required=True)
+def start(chain_name):
 	'''Starts a chain given the folder path.
 
 		see: cat ~/.lamden/project-name/project-name.source
 	'''
 	genesis_payload = None
 	try:
-		genesis_payload = open(settings.project_genesis, 'r').read()
+		genesis_payload = open(settings.project_genesis(chain_name), 'r').read()
 	except:
 		raise Exception('Could not start chain. No genesis.json in this directory. Change directories or initialize a new chain.')
 	print('Starting chain...')
 	chain = Chain()
 	proc = chain.start()
 	print(proc.pid)
-	with open(os.path.join(settings.lamden_folder_path,'chain.pid'), 'w') as f:
+	with open(settings.chain_pid, 'w') as f:
 		f.write(str(proc.pid))
 
 @cli.command('stop', short_help='stop the chain')

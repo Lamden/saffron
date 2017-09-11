@@ -6,7 +6,13 @@ import os
 import time
 from threading import Thread
 import re
-from saffron import settings
+from saffron.settings import (lamden_home,
+							lamden_folder_path,
+							lamden_db_file,
+							project_genesis,
+							GETH_BIN,
+							genesis_fn,
+							node_info_json)
 #from saffron.genesis import Chain
 import getpass
 import configparser
@@ -21,9 +27,9 @@ GENESIS_BLOCK_TEMPLATE = {
 		},
 	'alloc'      : {},
 	'coinbase'   : '0x0000000000000000000000000000000000000000',
-	'difficulty' : '0x0',
+	'difficulty' : '2100000',
 	'extraData'  : '',
-	'gasLimit'   : '0x0',
+	'gasLimit'   : '0x8000000',
 	'nonce'      : '0x0000000000000000',
 	'mixhash'    : '0x0000000000000000000000000000000000000000000000000000000000000000',
 	'parentHash' : '0x0000000000000000000000000000000000000000000000000000000000000000',
@@ -68,7 +74,9 @@ def generate_hex_string(length):
 		string += hex(random.randint(0, 16))[-1]
 	return string
 
-def create_genesis_block(genesisBlockPayload):
+def create_genesis_block(genesisBlockPayload=None):
+	''' places genesis json into os.environ['LAMDEN_FOLDER_PATH']
+	'''
 	assert all(x in \
 	['config',
 	'alloc',
@@ -88,11 +96,12 @@ def create_genesis_block(genesisBlockPayload):
 	'eip155Block',
 	'eip158Block'] \
 	for x in list(genesisBlockPayload['config'].keys()))
-
-	with open(os.path.join(settings.lamden_folder_path, 'genesis.json'), 'w') as fp:
+	with open(os.path.join(os.environ['LAMDEN_FOLDER_PATH'], 'genesis.json'), 'w') as fp:
 		json.dump(genesisBlockPayload, fp)
 
-def create_node_info(nodeInfoPayload):
+def create_node_info(nodeInfoPayload=None):
+	''' places node info json into os.environ['LAMDEN_FOLDER_PATH']
+	'''
 	assert all(x in \
 	['identity',
 	'rpc',
@@ -105,15 +114,19 @@ def create_node_info(nodeInfoPayload):
 	'autodag',
 	'networkid'] \
 	for x in list(nodeInfoPayload.keys()))
-
-	with open(os.path.join(settings.lamden_folder_path, 'node.info'), 'w') as fp:
+	with open(os.path.join(os.environ['LAMDEN_FOLDER_PATH'], 'node.info'), 'w') as fp:
 		json.dump(nodeInfoPayload, fp)
 
 def initialize_chain(project_dir, genesisBlockFp):
-	#Chain(project_dir=settings.lamden_folder_path, genesis_block_path=os.path.join(settings.lamden_folder_path, genesisBlockFp))
-	subprocess.Popen(['nohup', 'geth --datadir ' + settings.lamden_folder_path + ' init ' + os.path.join(settings.lamden_folder_path, genesisBlockFp)], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	cmd = '{} --datadir {} init {}'.format(GETH_BIN, os.environ['LAMDEN_FOLDER_PATH'], os.environ['PROJECT_GENESIS'])
+	print(cmd)
+	result = subprocess.check_output(cmd.split())
+	print(result)
 
 def run_generator(chain_name):
+	os.environ['LAMDEN_FOLDER_PATH'] = os.path.join(lamden_home, chain_name)
+	os.environ['PROJECT_GENESIS'] = project_genesis(chain_name)
+	os.environ['NODE_INFO_JSON'] = node_info_json(chain_name)
 	if not check_if_in_project():
 		# create a new chain!
 		# print('=== config {} ==='.format(chain_name))
@@ -156,23 +169,23 @@ def run_generator(chain_name):
 			genesis['config']['chainId'] = formatting(user_input)
 			print('Chain ID set to {}'.format(genesis['config']['chainId']))
 
-			user_input = input('Difficulty: ')
-			user_input = formatting(user_input)
+			# user_input = input('Difficulty: ')
+			# user_input = formatting(user_input)
 
-			if user_input > INT16:
-				user_input = INT16
+			# if user_input > INT16:
+			# 	user_input = INT16
 
-			genesis['difficulty'] = hex(user_input)
-			print('Difficulty set to {}'.format(genesis['difficulty']))
+			# genesis['difficulty'] = hex(user_input)
+			# print('Difficulty set to {}'.format(genesis['difficulty']))
 
-			user_input = input('Gas Limit: ')
-			user_input = formatting(user_input)
+			# user_input = input('Gas Limit: ')
+			# user_input = formatting(user_input)
 
-			if user_input > INT16:
-				user_input = INT16
+			# if user_input > INT16:
+			# 	user_input = INT16
 
-			genesis['gasLimit'] = hex(user_input)
-			print('Gas Limit set to {}'.format(genesis['gasLimit']))
+			# genesis['gasLimit'] = hex(user_input)
+			# print('Gas Limit set to {}'.format(genesis['gasLimit']))
 
 			print('\n=== Hashing Variables ===')
 			genesis['nonce'] = generate_hex_string(16)
@@ -194,26 +207,21 @@ def run_generator(chain_name):
 
 		user_input = input('Enter password for default account: ')
 		try:
-			print(settings.lamden_folder_path)
-			import pdb;pdb.set_trace()
-			new_chain(home_path=settings.lamden_folder_path, node_info=node_info, genesis_block=genesis, etherbase_pass=user_input)
+			new_chain(node_info=node_info, genesis_block=genesis, etherbase_pass=user_input)
 		except Exception as e:
 			print(e)
 			pass
 		print('Blockchain generated!')
 
-		print(generate_process_string())
+		# print(generate_process_string())
 	else:
 		print('Already in a project directory...')
 
-	#geth.attach(stdout=PIPE, stdin=PIPE)
-
 # this should be added to the account class in some capacity
 def create_account(password):
-	print(settings.lamden_folder_path)
-	with open(os.path.join(settings.lamden_folder_path, 'pass.temp'), 'w') as fp:
+	with open(os.path.join(os.environ['LAMDEN_FOLDER_PATH'], 'pass.temp'), 'w') as fp:
 		fp.write(password)
-	proc = subprocess.Popen('geth --datadir {} --password {} account new'.format(settings.lamden_folder_path, os.path.join(settings.lamden_folder_path, 'pass.temp')), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	proc = subprocess.Popen('geth --datadir {} --password {} account new'.format(os.environ['LAMDEN_FOLDER_PATH'], os.path.join(os.environ['LAMDEN_FOLDER_PATH'], 'pass.temp')), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	account_string = proc.stdout.read().decode('utf-8')
 	# return the regex account
 	try:
@@ -226,14 +234,12 @@ def create_account(password):
 	#os.remove('pass.temp')
 
 def generate_process_string():
-	assert open(os.path.join(settings.lamden_folder_path, 'genesis.json')) and open(os.path.join(settings.lamden_folder_path, 'node.info')), 'Genesis and Node info are not in this directory.'
-	node_info = json.loads(open(os.path.join(settings.lamden_folder_path, 'node.info')).read())
-
-	#"C:\Program Files\Geth\geth.exe" --rpc --rpcaddr "0.0.0.0" --rpcport "8545" --rpccorsdomain "http://localhost:1010" --rpcapi "web3,eth --networkid 1001201 --datadir ~/ --gasprice 0 console
-
+	assert open(os.environ.get('PROJECT_GENESIS', None)), 'PROJECT_GENESIS not found in ENV'
+	assert open(os.environ.get('NODE_INFO_JSON', None)), 'NODE_INFO_JSON not found in ENV'
+	node_info = json.loads(open(os.environ['NODE_INFO_JSON']).read())
 	process_string = ''
 	process_string += ' --rpc --rpcaddr 0.0.0.0 --rpcport {} --rpccorsdomain "*"'.format(node_info['rpcport']) if node_info['rpc'] else ''
-	process_string += ' --datadir {}'.format(settings.lamden_folder_path)
+	process_string += ' --datadir {}'.format(os.environ['LAMDEN_FOLDER_PATH'])
 	process_string += ' --port {}'.format(node_info['port'])
 	process_string += ' --nodiscover' if node_info['nodiscover'] == True else ''
 	process_string += ' --rpcapi "{}"'.format(node_info['rpcapi'])
@@ -241,37 +247,23 @@ def generate_process_string():
 	process_string += ' --gasprice 0 --mine'
 	return process_string
 
-def change_home_path(home_path=None):
-	assert home_path != None, 'Provide a new home path.'
-	run_location, filename = os.path.split(os.path.abspath(__file__))
-	config = configparser.ConfigParser()
-	config.read(os.path.join(run_location, 'config/default.conf'))
-	settings.lamden_home = os.environ.get('LAMDEN_HOME', None) if os.environ.get('LAMDEN_HOME', None) else os.getcwd()
-	settings.lamden_folder_path = os.environ.get('LAMDEN_FOLDER_PATH', None) if os.environ.get('LAMDEN_FOLDER_PATH', None) else join(settings.lamden_home, home_path)
-	settings.lamden_db_file = os.environ.get('LAMDEN_DB_FILE', None) if os.environ.get('LAMDEN_DB_FILE', None) else join(settings.lamden_folder_path, config.defaults()['lamden_db_file'])
-
-def new_chain(home_path=None, node_info=None, genesis_block=None, etherbase_pass=None):
+def new_chain(node_info=None, genesis_block=None, etherbase_pass=None):
 	assert etherbase_pass != None, 'Password for Etherbase account must be provided.'
-	if home_path != None:
-		change_home_path(home_path=home_path)
 
 	if node_info == None:
 		node_info = NODE_INFO_TEMPLATE
-
 	if genesis_block == None:
 		genesis_block = GENESIS_BLOCK_TEMPLATE
 	try:
-		os.makedirs(settings.lamden_folder_path)
+		os.makedirs(join(os.environ['LAMDEN_FOLDER_PATH'], 'contracts'))
 	except:
 		pass
 	try:
-		os.makedirs(join(settings.lamden_folder_path, 'contracts'))
-	except:
-		pass
-	try:
-		create_genesis_block(genesis_block)
 		create_node_info(node_info)
-		initialize_chain(settings.lamden_folder_path, 'genesis.json')
+		create_genesis_block(genesisBlockPayload=genesis_block)
+		initialize_chain(os.environ['LAMDEN_FOLDER_PATH'], os.environ['PROJECT_GENESIS'])
 		create_account(etherbase_pass)
 	except Exception as e:
+		import traceback
+		print(traceback.format_exc())
 		raise e

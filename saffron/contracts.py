@@ -84,10 +84,7 @@ class Contract(Contract):
 		# set in deploy
 		self.address = None
 		self.instance = None
-		# TODO : account creation on saffron init
-		self.defaulAccount = '0xabaa886e5c11c54e76d250efd70143fe0f959530'
-		# TODO : unlock ^
-		# self.web3.personal.unlockAccount(self.defaulAccount, 'password');
+		self.defaulAccount = None
 
 	def __str__(self):
 		return 'Contract {}, {}'.format(self.address if self.address else 'None', self.name if self.name else 'None')
@@ -109,7 +106,7 @@ class Contract(Contract):
 		self.defaultAccount = okay.listAccounts[int(input(options))]
 		result = okay.unlockAccount(self.defaultAccount, getpass.getpass('\nPassword:'), 5000)
 		if result:
-			self.address = self.web3.eth.sendTransaction(transaction={'data' : '0x' + self.bytecode, 'from': self.defaulAccount, 'gaslimit': 30000})
+			self.address = self.web3.eth.sendTransaction(transaction={'data' : '0x' + self.bytecode, 'from': self.defaultAccount, 'gaslimit': 30000})
 			self.instance = self.web3.eth.contract(self.address)
 		else:
 			raise Exepction('unable to unlock account')
