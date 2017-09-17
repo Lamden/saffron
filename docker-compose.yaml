@@ -11,8 +11,8 @@ services:
     ports: ['30303:30303', '8545:8545']
     volumes: ['/Users/jmunsch/.lamden/newCoin:/root/.ethereum']
     build:
-        context: https://github.com/ethereum/go-ethereum.git
-        dockerfile: ../Dockerfile.geth-client
+        context: ./go-ethereum
+        dockerfile: Dockerfile
   # lamden-api:
   #   container_name: 'lamden-api'
   #   image: 'lamden-api'
