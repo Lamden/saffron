@@ -7,7 +7,7 @@ import uuid
 
 mock_json = b'''{"identity": "GenesisNode", "rpc": true, "rpcport": 8545, "rpccorsdomain": "*", "port": 30303, "nodiscover": false, "ipcapi": "admin,db,eth,debug,miner,net,shh,txpool,personal,web3", "rpcapi": "db,eth,net,web3,personal,web3", "autodag": true, "networkid": 1900}'''
 
-with open('{HOME}/node.info'.format(HOME=os.environ.get('HOME')), 'wb') as f:
+with open(os.path.expanduser('/node.info'.format(HOME=os.environ.get('HOME'))), 'wb') as f:
     f.write(mock_json)
 
 @pytest.fixture
