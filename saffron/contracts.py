@@ -66,7 +66,8 @@ class Contract(Contract):
 		assert name != None, 'A name identifier must be provided to create a new contract instance.'
 		_name, _address = database.contract_exists(name=name)
 		assert _name is None and _address is None
-		self.web3 = Web3(Web3.HTTPProvider("http://127.0.0.1:8000"))
+		node_info = json.loads(open(os.environ['NODE_INFO_JSON']).read())
+		self.web3 = Web3(Web3.HTTPProvider("http://127.0.0.1:{port}".format(port=node_info.get('rpcport'))))
 		self.name = name
 		self.is_deployed = None
 		with open(sol_file_path) as f:

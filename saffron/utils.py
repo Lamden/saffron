@@ -39,7 +39,7 @@ GENESIS_BLOCK_TEMPLATE = {
 NODE_INFO_TEMPLATE = {
 	'identity' : 'GenesisNode',
 	'rpc' : True,
-	'rpcport' : 8000,
+	'rpcport' : 8001,
 	'rpccorsdomain' : '*',
 	'port' : 30303,
 	'nodiscover' : True,
@@ -138,7 +138,7 @@ def run_generator(chain_name):
 			user_input = input('Master Node Identity (optional, default = MasterNode): ')
 			node_info['identity'] = user_input if user_input else node_info['identity']
 
-			user_input = input('RPC Port (optional, default = 8000): ')
+			user_input = input('RPC Port (optional, default = 8001): ')
 			node_info['rpcport'] = formatting(user_input) if formatting(user_input) > 0 else node_info['rpcport']
 
 			user_input = input('General Port (optional, default = 30303): ')
