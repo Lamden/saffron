@@ -46,10 +46,23 @@ class Account:
 	        _address (str): chain address.
 	        _name (str): name of token/chain.
 
+		Ethereum methods :
+			self.p.importRawKey
+			self.p.newAccount
+			self.p.listAccounts
+			self.p.getListAccounts
+			self.p.sendTransaction
+			self.p.signAndSendTransaction
+			self.p.lockAccount
+			self.p.unlockAccount
+			self.p.sign
+			self.p.ecRecover
 	    '''
 	def __init__(self, name=None, address=None, password=None, chain=None):
 		'''initialize the class
 			TODO : document chain ()
+			TODO : salt passwords with bcrypt or better
+
 			Args:
 		        _address (str): chain address.
 	        	_name (str): name of token/chain.
@@ -66,13 +79,15 @@ class Account:
 			self.name = _name
 			self.address = _address
 			self._new_account = False
-
+		node_info = json.loads(open(os.environ['NODE_INFO_JSON']).read())
+		self.web3 = Web3(Web3.HTTPProvider("http://127.0.0.1:{port}".format(port=node_info.get('rpcport'))))
+		self.p = Personal(self.web3)
 
 	@classmethod
 	def _from_db(self, name=None, address=None):
 		return
 
-	#TODO
-	#fancy shit making interacting with the blockchain easy (get balance, transact, etc)
 	def balance(self):
 		return Eth.get_balance(self.address)
+
+
