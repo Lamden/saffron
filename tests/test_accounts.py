@@ -35,26 +35,32 @@ def chain(monkeypatch): # monkeypatch is magically injected
 
 
 class MockServerRequestHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        return
-
     def do_POST(self, *args, **kwargs):
         content_len = int(self.headers.get('content-length'))
         post_body = self.rfile.read(content_len)
-        if post_body == b'{"jsonrpc": "2.0", "method": "personal_newAccount", "params": ["doesnt_matter"], "id": 0}':
+        p_body = json.loads(post_body)
+        # tests = [b'{"jsonrpc": "2.0", "method": "personal_listAccounts", "params": [], "id": 0}',
+        # b'{"jsonrpc": "2.0", "method": "personal_newAccount", "params": ["doesnt_matter"], "id": 0}']
+        try:
+            stub = json.dumps({"result": ''})
+            tests = {"personal_listAccounts": stub,
+                     "personal_newAccount": stub,
+                     "personal_importRawKey": stub,
+                     "personal_newAccount": stub,
+                     "personal_listAccounts": stub,
+                     "personal_sendTransaction": stub,
+                     "personal_lockAccount": stub,
+                     "personal_unlockAccount": stub,
+                     "personal_sign": stub,
+                     "personal_ecRecover": stub}
             self.send_response(200)
             self.send_header('Content-Type', 'application/json; charset=utf-8')
             self.end_headers()
-            response_content = json.dumps({"result": ''})
-            self.wfile.write(response_content.encode('utf-8'))
+            self.wfile.write(tests.get(p_body['method']).encode('utf-8'))
             return
-
-def get_free_port():
-    s = socket.socket(socket.AF_INET, type=socket.SOCK_STREAM)
-    s.bind(('127.0.0.1', 8545))
-    address, port = s.getsockname()
-    s.close()
-    return port
+        except Exception as e:
+            import traceback
+            print(traceback.format_exc(), p_body['method'])
 
 def start_mock_server(port):
     mock_server = HTTPServer(('127.0.0.1', port), MockServerRequestHandler)
@@ -63,7 +69,7 @@ def start_mock_server(port):
     mock_server_thread.start()
 
 start_mock_server(8545)
-
+p = 'doesnt_matter'
 
 def test_accounts(chain):
     new_account = str(uuid.uuid1())
@@ -77,8 +83,8 @@ def test_accounts(chain):
 
 def test_account_stored_in_db_when_created():
     new_account = str(uuid.uuid1())
-    a = Account(name=new_account, password='doesnt_matter', chain=Chain())
-    b = Account(name=new_account, password='doesnt_matter', chain=Chain())
+    a = Account(name=new_account, password=p, chain=Chain())
+    b = Account(name=new_account, password=p, chain=Chain())
     assert a.name == b.name
     assert a._new_account
     # assert b._new_account is False
@@ -92,46 +98,48 @@ def test_account_stored_in_db_when_created():
 
 def test_newAccount(chain):
     new_account = str(uuid.uuid1())
-    p = 'doesnt_matter'
     a = Account(name=new_account, password=p, chain=Chain())
     a.p.newAccount(password=p)
 
 def test_listAccounts(chain):
     new_account = str(uuid.uuid1())
-    a = Account(name=new_account, password='doesnt_matter', chain=Chain())
-    a.p.listAccounts()
+    a = Account(name=new_account, password=p, chain=Chain())
+    a.p.listAccounts
 
-# def test_getListAccounts(chain):
-#     new_account = str(uuid.uuid1())
-#     a = Account(name=new_account, password='doesnt_matter', chain=Chain())
-#     a.p.getListAccounts(*args, **kwargs)
+def test_getListAccounts(chain):
+    new_account = str(uuid.uuid1())
+    a = Account(name=new_account, password=p, chain=Chain())
+    try:
+        a.p.getListAccounts()
+    except NotImplementedError:
+        pass
 
-# def test_sendTransaction(chain):
-#     new_account = str(uuid.uuid1())
-#     a = Account(name=new_account, password='doesnt_matter', chain=Chain())
-#     a.p.sendTransaction(transaction, passphrase)
+def test_sendTransaction(chain):
+    new_account = str(uuid.uuid1())
+    a = Account(name=new_account, password=p, chain=Chain())
+    a.p.sendTransaction({"from": "0xhere", "data": 'hello'}, p)
 
-# def test_signAndSendTransaction(chain):
-#     new_account = str(uuid.uuid1())
-#     a = Account(name=new_account, password='doesnt_matter', chain=Chain())
-#     a.p.signAndSendTransaction()
+def test_signAndSendTransaction(chain):
+    new_account = str(uuid.uuid1())
+    a = Account(name=new_account, password=p, chain=Chain())
+    a.p.signAndSendTransaction({"from": "0xhere", "data": 'hello'}, p)
 
-# def test_lockAccount(chain):
-#     new_account = str(uuid.uuid1())
-#     a = Account(name=new_account, password='doesnt_matter', chain=Chain())
-#     a.p.unlockAccount(account, passphrase, duration=None)
+def test_lockAccount(chain):
+    new_account = str(uuid.uuid1())
+    a = Account(name=new_account, password=p, chain=Chain())
+    a.p.unlockAccount(new_account, p, duration=None)
 
-# def test_unlockAccount(chain):
-#     new_account = str(uuid.uuid1())
-#     a = Account(name=new_account, password='doesnt_matter', chain=Chain())
-#     a.p.unlockAccount()
+def test_unlockAccount(chain):
+    new_account = str(uuid.uuid1())
+    a = Account(name=new_account, password=p, chain=Chain())
+    a.p.unlockAccount(new_account, p)
 
-# def test_sign(chain):
-#     new_account = str(uuid.uuid1())
-#     a = Account(name=new_account, password='doesnt_matter', chain=Chain())
-#     a.p.sign(message, signer, passphrase)
+def test_sign(chain):
+    new_account = str(uuid.uuid1())
+    a = Account(name=new_account, password=p, chain=Chain())
+    a.p.sign('message', new_account, p)
 
-# def test_ecRecover(chain):
-#     new_account = str(uuid.uuid1())
-#     a = Account(name=new_account, password='doesnt_matter', chain=Chain())
-#     a.p.ecRecover(self, message, signature)
+def test_ecRecover(chain):
+    new_account = str(uuid.uuid1())
+    a = Account(name=new_account, password=p, chain=Chain())
+    a.p.ecRecover('message', 'signature')
