@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(name='saffron-cli',
       packages=find_packages(),
-      version = '0.1.10',
+      version = '0.1.11',
       description = 'blockchain artifact development tools',
       author = 'Lamden',
       author_email = 'james@lamden.io',
